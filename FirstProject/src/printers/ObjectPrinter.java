@@ -15,10 +15,13 @@ public abstract class ObjectPrinter<T> {
 	}
 
 	protected abstract List<String> getColumnValues();
+
 	protected abstract List<String> getColumns();
+
 	protected abstract String getValue(String column, T item);
-	protected abstract void printObject(int totalLength, T t, PrintWriter writer);	
-	
+
+	protected abstract void printObject(int totalLength, T t, PrintWriter writer);
+
 	public void printObjects(List<T> entities, PrintWriter writer) {
 		int totalLength = calculateTotalLength();
 
@@ -26,6 +29,7 @@ public abstract class ObjectPrinter<T> {
 		for (T t : entities) {
 			printObject(totalLength, t, writer);
 		}
+		writer.flush();
 	}
 
 	private int calculateTotalLength() {
@@ -61,7 +65,5 @@ public abstract class ObjectPrinter<T> {
 	public TxtFileReader getTextFileReader() {
 		return textFileReader;
 	}
-	
-	
 
 }

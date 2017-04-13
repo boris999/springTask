@@ -1,4 +1,5 @@
 package entities;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -6,7 +7,7 @@ import java.util.List;
 import enums.ProjectProperties;
 import enums.ProjectStatus;
 
-public final class Project{
+public final class Project {
 	private final String id;
 	private final String title;
 	private final String description;

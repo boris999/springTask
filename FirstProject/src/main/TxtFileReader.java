@@ -1,4 +1,5 @@
 package main;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,10 +11,10 @@ import java.util.Map;
 import objectBuilders.ObjectBuilder;
 
 public class TxtFileReader {
-	
+
 	public Map<?, Integer> wordLengthMap = new HashMap<>();
-	
-	public <T> List<T> readDirectory(File directory, ObjectBuilder<T> builder){
+
+	public <T> List<T> readDirectory(File directory, ObjectBuilder<T> builder) {
 
 		File[] files = directory.listFiles();
 		if (files.length == 0) {
@@ -22,9 +23,9 @@ public class TxtFileReader {
 		List<T> result = new ArrayList<>();
 		for (File f : files) {
 			String currentFileName = f.getName();
-			
+
 			String id = builder.readId(currentFileName);
-			if (id == null){
+			if (id == null) {
 				continue;
 			}
 			Map<String, String> fileMap = readFile(f);
@@ -43,7 +44,9 @@ public class TxtFileReader {
 			for (String line : lines) {
 				String[] currentLineSplit = line.split("=");
 				fileMap.put(currentLineSplit[0], currentLineSplit[1]);
-				fileMap.put(currentLineSplit[0]+"length", String.valueOf((currentLineSplit[0].length() >= currentLineSplit[1].length() ? currentLineSplit[0].length() : currentLineSplit[1].length())));
+				fileMap.put(currentLineSplit[0] + "length",
+						String.valueOf((currentLineSplit[0].length() >= currentLineSplit[1].length()
+								? currentLineSplit[0].length() : currentLineSplit[1].length())));
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -51,9 +54,8 @@ public class TxtFileReader {
 		return fileMap;
 	}
 
-	public  Map<?, Integer> getWordLengthMap() {
+	public Map<?, Integer> getWordLengthMap() {
 		return wordLengthMap;
 	}
-	
 
 }
