@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import exceptions.DirectoryDoesNotExistsException;
-import exceptions.NotEnoughParametersException;
-import exceptions.WrongFileTypeException;
 import objectBuilders.ObjectBuilder;
 import printers.EmployeePrinter;
 import printers.ObjectPrinter;
@@ -38,24 +35,23 @@ public class Print {
 					printEntities(converter, sortBy, txtReaderObject, pp);
 				}
 	
-			} catch (NotEnoughParametersException | DirectoryDoesNotExistsException | WrongFileTypeException e) {
+			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
 	
 	}
 
-	private static void checkArguments(String[] args)
-			throws NotEnoughParametersException, DirectoryDoesNotExistsException, WrongFileTypeException {
+	private static void checkArguments(String[] args){
 		if (args.length < 3) {
-			throw new NotEnoughParametersException("Please provide enough parameters to run the program");
+			throw new IllegalArgumentException("Please provide enough parameters to run the program");
 		}
 		directory = new File(args[0]);
 		if (!(directory.isDirectory() && directory.exists())) {
-			throw new DirectoryDoesNotExistsException("There is no such directory");
+			throw new IllegalArgumentException("There is no such directory");
 		}
 		typeOfTheFile = args[1];
 		if (!(typeOfTheFile.equalsIgnoreCase(EMPLOYEE) || typeOfTheFile.equalsIgnoreCase(PROJECT))) {
-			throw new WrongFileTypeException("Please provide proper type for the files to read");
+			throw new IllegalArgumentException("Please provide proper type for the files to read");
 		}
 		sortBy = new ArrayList<String>();
 		for (int i = 2; i < args.length; i++) {
