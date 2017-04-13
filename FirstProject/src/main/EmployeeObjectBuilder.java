@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import enums.EmployeeProperties;
+import enums.EmployeeStatus;
 import objectBuilders.ObjectBuilder;
 
 public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {

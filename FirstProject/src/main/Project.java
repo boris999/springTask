@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import enums.ProjectProperties;
+import enums.ProjectStatus;
+
 public final class Project{
 	private final String id;
 	private final String title;
@@ -53,29 +56,4 @@ public final class Project{
 		return projectComaratorList;
 	}
 
-	
-	
-	public String getPropertyValue(ProjectProperties propertyName) {
-		switch (propertyName) {
-		case ID:
-			return id;
-
-		case TITLE:
-			return title;
-
-		case DESCRIPTION:
-			return description;
-
-		case CUSTOMER:
-			return customer;
-
-		case STARTED:
-			return started;
-
-		case STATUS:
-			return status.toString();
-
-		}
-		return null;
-	}
 }

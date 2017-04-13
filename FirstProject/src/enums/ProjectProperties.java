@@ -1,6 +1,8 @@
-package main;
+package enums;
 
 import java.util.Comparator;
+
+import main.Project;
 
 public enum ProjectProperties {
 	ID(new Comparator<Project>() {

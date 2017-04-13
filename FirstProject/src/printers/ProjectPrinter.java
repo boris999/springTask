@@ -4,8 +4,8 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
+import enums.ProjectProperties;
 import main.Project;
-import main.ProjectProperties;
 import main.TxtFileReader;
 
 public class ProjectPrinter extends ObjectPrinter<Project> {

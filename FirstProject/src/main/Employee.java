@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import enums.EmployeeProperties;
+import enums.EmployeeStatus;
+
 public final class Employee {
 	private String id;
 	private final String firstName;
@@ -41,12 +44,6 @@ public final class Employee {
 		return status;
 	}
 
-	@Override
-	public String toString() {
-		return "Employee [id=" + id + ", first_name=" + firstName + ", last_name=" + lastName + ", age=" + age
-				+ ", professional_expereince=" + professionalExpereince + ", status=" + status + "]";
-	}
-
 	public String getId() {
 		return id;
 	}
@@ -57,32 +54,6 @@ public final class Employee {
 			employeeComaratorList.add(ep.getComparator());
 		}
 		return employeeComaratorList;
-	}
-
-
-
-	public String getPropertyValue(EmployeeProperties propertyName) {
-		switch (propertyName) {
-		case ID:
-			return id;
-
-		case FIRST_NAME:
-			return firstName;
-
-		case LAST_NAME:
-			return lastName;
-
-		case AGE:
-			return age;
-
-		case PROFESSIONAL_EXPERIENCE:
-			return professionalExpereince;
-
-		case STATUS:
-			return status.toString();
-
-		}
-		return null;
 	}
 
 }
