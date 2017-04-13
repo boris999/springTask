@@ -1,4 +1,4 @@
-package main;
+package objectBuilders;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import entities.Employee;
 import enums.EmployeeProperties;
 import enums.EmployeeStatus;
-import objectBuilders.ObjectBuilder;
 
 public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 

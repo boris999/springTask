@@ -2,7 +2,7 @@ package enums;
 
 import java.util.Comparator;
 
-import main.Employee;
+import entities.Employee;
 
 public enum EmployeeProperties {
 	ID(new Comparator<Employee>() {

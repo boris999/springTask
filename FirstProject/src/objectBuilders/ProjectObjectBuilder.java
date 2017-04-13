@@ -1,4 +1,4 @@
-package main;
+package objectBuilders;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import entities.Project;
 import enums.ProjectProperties;
 import enums.ProjectStatus;
-import objectBuilders.ObjectBuilder;
 
 public class ProjectObjectBuilder implements ObjectBuilder<Project> {
 
