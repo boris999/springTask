@@ -1,11 +1,9 @@
+package main;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public final class Employee{
+public final class Employee {
 	private String id;
 	private final String firstName;
 	private final String lastName;
@@ -100,6 +98,7 @@ public final class Employee{
 			this.comparator = comparator;
 		}
 	}
+
 	public String getPropertyValue(EmployeeProperties propertyName) {
 		switch (propertyName) {
 		case ID:
@@ -123,9 +122,5 @@ public final class Employee{
 		}
 		return null;
 	}
-
-
-
-	
 
 }

@@ -1,3 +1,4 @@
+package main;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -84,10 +84,5 @@ public class ProjectObjectBuilder implements ObjectBuilder<Project> {
 			id = match.group("id");
 		}
 		return id;
-	}
-
-	@Override
-	public Map<String, Project.ProjectProperties> getFieldToFilePropertyMap(){
-		return FIELD_TO_PROPERTY_MAP;
 	}
 }

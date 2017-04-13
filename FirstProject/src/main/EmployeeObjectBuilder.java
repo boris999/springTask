@@ -1,3 +1,4 @@
+package main;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,7 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -94,53 +94,4 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 		return mapToReturn;
 	}
 
-	@Override
-	public void printHeader(Map<?, Integer> wordLengthMap, int totalLength) {
-		ObjectBuilder.printLine("=", totalLength);
-		System.out.println();
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.ID) + 4) + "s", "id");
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.FIRST_NAME) + 4) + "s", FIRST_NAME);
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.LAST_NAME) + 4) + "s", LAST_NAME);
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.AGE) + 4) + "s", AGE);
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.PROFESSIONAL_EXPERIENCE) + 4) + "s",
-				PROFESSIONAL_EXPERIENCE);
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.STATUS) + 4) + "s", STATUS);
-		System.out.print("|");
-		System.out.println();
-		ObjectBuilder.printLine("=", totalLength);
-		System.out.println();
-	}
-
-	@Override
-	public void printObject(Map<?, Integer> wordLengthMap, int totalLength, Employee p) {
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.ID) + 4) + "s", p.getId());
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.FIRST_NAME) + 4) + "s",
-				p.getFirstName());
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.LAST_NAME) + 4) + "s", p.getLastName());
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.AGE) + 4) + "s", p.getAge());
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.PROFESSIONAL_EXPERIENCE) + 4) + "s",
-				p.getProfessionalExpereince());
-		System.out.print("|");
-		System.out.printf("%" + (wordLengthMap.get(Employee.EmployeeProperties.STATUS) + 4) + "s", p.getStatus());
-		System.out.print("|");
-		System.out.println();
-		ObjectBuilder.printLine("-", totalLength);
-		System.out.println();
-	}
-	
-	@Override
-	public Map<String, Project.ProjectProperties> getFieldToFilePropertyMap(){
-		return FIELD_TO_PROPERTY_MAP;
-	}
 }

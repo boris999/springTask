@@ -1,3 +1,4 @@
+package main;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -52,7 +53,7 @@ public final class Project{
 		return projectComaratorList;
 	}
 
-	static enum ProjectProperties {
+	public static enum ProjectProperties {
 		ID(new Comparator<Project>() {
 			@Override
 			public int compare(Project o1, Project o2) {
@@ -91,6 +92,7 @@ public final class Project{
 			this.comparator = comparator;
 		}
 	}
+	
 	public String getPropertyValue(ProjectProperties propertyName) {
 		switch (propertyName) {
 		case ID:

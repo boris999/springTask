@@ -1,24 +1,22 @@
+package main;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 import exceptions.DirectoryDoesNotExistsException;
 import exceptions.NotEnoughParametersException;
 import exceptions.WrongFileTypeException;
-
 import objectBuilders.ObjectBuilder;
+import printers.EmployeePrinter;
+import printers.ObjectPrinter;
+import printers.ProjectPrinter;
 
 public class Print {
 
 	private static final String PROJECT = "project";
 	private static final String EMPLOYEE = "employee";
-	private static List<Employee> employees;
-	private static List<Project> projects;
 	private static File directory;
 	private static String typeOfTheFile;
 	private static List<String> sortBy = new ArrayList<String>();
@@ -28,11 +26,16 @@ public class Print {
 				checkArguments(args);
 				boolean isEmployee = EMPLOYEE.equalsIgnoreCase(typeOfTheFile);
 				boolean isProject = PROJECT.equalsIgnoreCase(typeOfTheFile);
+				TxtFileReader txtReaderObject = new TxtFileReader();
 				if (isEmployee) {
-					printEntities(new EmployeeObjectBuilder(), sortBy);
+					EmployeeObjectBuilder converter = new EmployeeObjectBuilder();
+					EmployeePrinter ep = new EmployeePrinter(txtReaderObject);
+					printEntities(converter, sortBy, txtReaderObject, ep);
 				}
 				if (isProject) {
-					printEntities(new ProjectObjectBuilder(), sortBy);;
+					ProjectObjectBuilder converter = new ProjectObjectBuilder();
+					ProjectPrinter pp = new ProjectPrinter(txtReaderObject);
+					printEntities(converter, sortBy, txtReaderObject, pp);
 				}
 	
 			} catch (NotEnoughParametersException | DirectoryDoesNotExistsException | WrongFileTypeException e) {
@@ -60,14 +63,12 @@ public class Print {
 		}
 	}
 
-	private static <T> void printEntities(ObjectBuilder<T> converter, List<String> sortBy) {
-		TxtFileReader txtReaderObject = new TxtFileReader();
-		List<T> entities = txtReaderObject.readDirectory(directory, converter);
-		Map<?, Integer> wordLengthMap = txtReaderObject.getWordLengthMap();
-		//Map<entities.get(0).getStatus(), Integer> test
+	private static <T> void printEntities(ObjectBuilder<T> converter, List<String> sortBy, TxtFileReader txtReaderObject, ObjectPrinter<T> objectPrinter) {
 		CompoundComparator<T> cComparator = new CompoundComparator<>(converter.getComparator(sortBy));
+		List<T> entities = txtReaderObject.readDirectory(directory, converter);
 		Collections.sort(entities, cComparator);
-		converter.printObjects(entities, wordLengthMap);
+		objectPrinter.printObjects(entities, new PrintWriter(System.out));
+
 
 	}
 
