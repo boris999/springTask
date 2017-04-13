@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import main.Employee;
+import main.EmployeeProperties;
 import main.TxtFileReader;
 
 public class EmployeePrinter extends ObjectPrinter<Employee> {
@@ -14,7 +15,7 @@ public class EmployeePrinter extends ObjectPrinter<Employee> {
 	}
 
 	@Override
-	protected List<String> getColumnValues() {
+	protected List<String> getColumns() {
 		return Arrays.asList("Id", "First name", "Last name", "Age", "Professional experience", "Status");
 	}
 
@@ -22,22 +23,22 @@ public class EmployeePrinter extends ObjectPrinter<Employee> {
 	protected String getValue(String column, Employee item) {
 		switch (column) {
 		case "Id":
-			return item.getId();
+			return String.format(formatString(EmployeeProperties.ID), item.getId());
 
 		case "First name":
-			return item.getFirstName();
+			return String.format(formatString(EmployeeProperties.FIRST_NAME), item.getFirstName());
 
 		case "Last name":
-			return item.getLastName();
+			return String.format(formatString(EmployeeProperties.LAST_NAME), item.getLastName());
 
 		case "Age":
-			return item.getAge();
+			return String.format(formatString(EmployeeProperties.AGE), item.getAge());
 
 		case "Professional experience":
-			return item.getProfessionalExpereince();
+			return String.format(formatString(EmployeeProperties.PROFESSIONAL_EXPERIENCE), item.getProfessionalExpereince());
 
 		case "Status":
-			return item.getStatus().toString();
+			return String.format(formatString(EmployeeProperties.STATUS), item.getStatus().toString());
 
 		}
 		return null;
@@ -45,14 +46,29 @@ public class EmployeePrinter extends ObjectPrinter<Employee> {
 
 	@Override
 	public void printObject(int totalLength, Employee t, PrintWriter writer) {
-		// TODO Auto-generated method stub
+		writer.print("|");
+		for (String s : getColumns()) {
+			writer.print(getValue(s, t));
+			writer.print("|");
+		}
+		writer.println();
+		printLine("-", totalLength, writer);
+		writer.println();
 		
 	}
 
+	
 	@Override
-	protected List<String> getColumns() {
-		// TODO Auto-generated method stub
-		return null;
+	protected List<String> getColumnValues() {
+		return Arrays.asList(String.format(formatString(EmployeeProperties.ID), "Id"),
+				String.format(formatString(EmployeeProperties.FIRST_NAME), "Title"),
+				String.format(formatString(EmployeeProperties.FIRST_NAME), "Description"),
+				String.format(formatString(EmployeeProperties.AGE), "Customer"),
+				String.format(formatString(EmployeeProperties.PROFESSIONAL_EXPERIENCE), "Started"),
+				String.format(formatString(EmployeeProperties.STATUS), "Status"));
 	}
 
+	private String formatString(EmployeeProperties pp) {
+		return "%" + (getTextFileReader().getWordLengthMap().get(pp) + FREE_SPACE_PER_CELL) + "s";
+	}
 }

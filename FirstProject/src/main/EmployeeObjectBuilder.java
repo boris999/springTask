@@ -17,7 +17,7 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 	private static final String FILE_ID = "id";
 	private static final Pattern PATTERN = Pattern.compile("^employee_(?<" + FILE_ID + ">.*)(\\.txt)$",
 			Pattern.CASE_INSENSITIVE);
-	private static final Map<String, Employee.EmployeeProperties> FIELD_TO_PROPERTY_MAP;
+	private static final Map<String, EmployeeProperties> FIELD_TO_PROPERTY_MAP;
 	private static final String FIRST_NAME = "first_name";
 	private static final String LAST_NAME = "last_name";
 	private static final String AGE = "age";
@@ -25,12 +25,12 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 	private static final String STATUS = "status";
 
 	static {
-		Map<String, Employee.EmployeeProperties> modifyableMap = new LinkedHashMap<>();
-		modifyableMap.put(FIRST_NAME, Employee.EmployeeProperties.FIRST_NAME);
-		modifyableMap.put(LAST_NAME, Employee.EmployeeProperties.LAST_NAME);
-		modifyableMap.put(AGE, Employee.EmployeeProperties.AGE);
-		modifyableMap.put(PROFESSIONAL_EXPERIENCE, Employee.EmployeeProperties.PROFESSIONAL_EXPERIENCE);
-		modifyableMap.put(STATUS, Employee.EmployeeProperties.STATUS);
+		Map<String, EmployeeProperties> modifyableMap = new LinkedHashMap<>();
+		modifyableMap.put(FIRST_NAME, EmployeeProperties.FIRST_NAME);
+		modifyableMap.put(LAST_NAME, EmployeeProperties.LAST_NAME);
+		modifyableMap.put(AGE, EmployeeProperties.AGE);
+		modifyableMap.put(PROFESSIONAL_EXPERIENCE, EmployeeProperties.PROFESSIONAL_EXPERIENCE);
+		modifyableMap.put(STATUS, EmployeeProperties.STATUS);
 		FIELD_TO_PROPERTY_MAP = Collections.unmodifiableMap(modifyableMap);
 	}
 
@@ -57,9 +57,9 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 
 	@Override
 	public List<Comparator<Employee>> getComparator(List<String> properties) {
-		List<Employee.EmployeeProperties> employeeEnumList = new ArrayList<>();
+		List<EmployeeProperties> employeeEnumList = new ArrayList<>();
 		for (String prop : properties) {
-			Employee.EmployeeProperties effective = FIELD_TO_PROPERTY_MAP.get(prop);
+			EmployeeProperties effective = FIELD_TO_PROPERTY_MAP.get(prop);
 			if (effective == null) {
 
 			}
@@ -79,18 +79,18 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 
 	@Override
 	public Map<?, Integer> readLength(String id, Map<String, String> properties, Map<?, Integer> wordLengthMap) {
-		Map<Employee.EmployeeProperties, Integer> mapToReturn = new HashMap<>();
+		Map<EmployeeProperties, Integer> mapToReturn = new HashMap<>();
 		for (String s : FIELD_TO_PROPERTY_MAP.keySet()) {
 			Integer oldvalue = wordLengthMap.get(FIELD_TO_PROPERTY_MAP.get(s)) == null ? 0
 					: wordLengthMap.get(FIELD_TO_PROPERTY_MAP.get(s));
 			Integer newValue = Integer.parseInt(properties.get(s + "length"));
 			mapToReturn.put(FIELD_TO_PROPERTY_MAP.get(s), oldvalue >= newValue ? oldvalue : newValue);
 		}
-		Integer oldIdLength = wordLengthMap.get(Employee.EmployeeProperties.ID) == null ? 0
-				: wordLengthMap.get(Employee.EmployeeProperties.ID);
+		Integer oldIdLength = wordLengthMap.get(EmployeeProperties.ID) == null ? 0
+				: wordLengthMap.get(EmployeeProperties.ID);
 		Integer newIdLenght = id.length();
 
-		mapToReturn.put(Employee.EmployeeProperties.ID, oldIdLength >= newIdLenght ? oldIdLength : newIdLenght);
+		mapToReturn.put(EmployeeProperties.ID, oldIdLength >= newIdLenght ? oldIdLength : newIdLenght);
 		return mapToReturn;
 	}
 

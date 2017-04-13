@@ -7,18 +7,18 @@ import main.TxtFileReader;
 
 public abstract class ObjectPrinter<T> {
 	static final int FREE_SPACE_PER_CELL = 4;
-	//private final List<T> items;
+
 	private TxtFileReader textFileReader;
 
 	public ObjectPrinter(TxtFileReader textFileReader) {
-		//this.items = items;
 		this.textFileReader = textFileReader;
 	}
 
-	void print(PrintWriter writer) {
-
-	}
-
+	protected abstract List<String> getColumnValues();
+	protected abstract List<String> getColumns();
+	protected abstract String getValue(String column, T item);
+	protected abstract void printObject(int totalLength, T t, PrintWriter writer);	
+	
 	public void printObjects(List<T> entities, PrintWriter writer) {
 		int totalLength = calculateTotalLength();
 
@@ -37,12 +37,6 @@ public abstract class ObjectPrinter<T> {
 		totalLength = totalLength + (numberOfElementsToPrint) * FREE_SPACE_PER_CELL;
 		return totalLength;
 	}
-
-	protected abstract List<String> getColumnValues();
-
-	protected abstract String getValue(String column, T item);
-
-	public abstract void printObject(int totalLength, T t, PrintWriter writer);
 
 	public void printHeader(int totalLength, PrintWriter writer) {
 		printLine("=", totalLength, writer);
@@ -68,6 +62,6 @@ public abstract class ObjectPrinter<T> {
 		return textFileReader;
 	}
 	
-	protected abstract List<String> getColumns();
+	
 
 }
