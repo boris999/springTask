@@ -23,12 +23,12 @@ public enum EmployeeProperties {
 	}), AGE(new Comparator<Employee>() {
 		@Override
 		public int compare(Employee o1, Employee o2) {
-			return o1.getAge().compareTo(o2.getAge());
+			return o1.getAge()-o2.getAge();
 		}
 	}), PROFESSIONAL_EXPERIENCE(new Comparator<Employee>() {
 		@Override
 		public int compare(Employee o1, Employee o2) {
-			return o1.getProfessionalExpereince().compareTo(o2.getProfessionalExpereince());
+			return o1.getProfessionalExpereince()-o2.getProfessionalExpereince();
 		}
 	}), STATUS(new Comparator<Employee>() {
 		@Override

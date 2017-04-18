@@ -37,10 +37,10 @@ public class EmployeePrinter extends ObjectPrinter<Employee> {
 			return item.getLastName();
 
 		case "Age":
-			return item.getAge();
+			return String.valueOf(item.getAge());
 
 		case "Professional experience":
-			return item.getProfessionalExpereince();
+			return String.valueOf(item.getProfessionalExpereince());
 
 		case "Status":
 			return item.getStatus().toString();

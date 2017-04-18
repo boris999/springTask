@@ -13,7 +13,7 @@ import entities.Project;
 import enums.ProjectProperties;
 import enums.ProjectStatus;
 
-public class ProjectObjectBuilder implements ObjectBuilder<Project> {
+public class ProjectObjectBuilder extends ObjectBuilder<Project> {
 
 	private static final String FILE_ID = "id";
 	private static final Pattern PATTERN = Pattern.compile("^project_(?<" + FILE_ID + ">.*)(\\.txt)$",
@@ -44,9 +44,22 @@ public class ProjectObjectBuilder implements ObjectBuilder<Project> {
 		String customer = properties.get(CUSTOMER);
 		String started = properties.get(STARTED);
 		String status = properties.get(STATUS).toUpperCase();
-		ProjectStatus ps = ProjectStatus.valueOf(status);
+		ProjectStatus ps = buildEnum(status);
 
+		if(title == null || description == null || started == null || customer == null || ps == null){
+			return null;
+		}
 		return new Project(id, title, description, customer, started, ps);
+	}
+
+	private ProjectStatus buildEnum(String status) {
+		ProjectStatus ps = null;
+		try{
+		ps = ProjectStatus.valueOf(status);}
+		catch(IllegalArgumentException e){
+			return null;
+		}
+		return ps;
 	}
 
 	@Override

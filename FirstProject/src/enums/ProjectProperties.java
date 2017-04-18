@@ -5,37 +5,12 @@ import java.util.Comparator;
 import entities.Project;
 
 public enum ProjectProperties {
-	ID(new Comparator<Project>() {
-		@Override
-		public int compare(Project o1, Project o2) {
-			return o1.getId().compareTo(o2.getId());
-		}
-	}), TITLE(new Comparator<Project>() {
-		@Override
-		public int compare(Project o1, Project o2) {
-			return o1.getTitle().compareTo(o2.getTitle());
-		}
-	}), DESCRIPTION(new Comparator<Project>() {
-		@Override
-		public int compare(Project o1, Project o2) {
-			return o1.getDescription().compareTo(o2.getDescription());
-		}
-	}), CUSTOMER(new Comparator<Project>() {
-		@Override
-		public int compare(Project o1, Project o2) {
-			return o1.getCustomer().compareTo(o2.getCustomer());
-		}
-	}), STARTED(new Comparator<Project>() {
-		@Override
-		public int compare(Project o1, Project o2) {
-			return o1.getStarted().compareTo(o2.getStarted());
-		}
-	}), STATUS(new Comparator<Project>() {
-		@Override
-		public int compare(Project o1, Project o2) {
-			return o1.getStatus().toString().compareTo(o2.getStatus().toString());
-		}
-	});
+	ID((p1, p2) -> p1.getId().compareTo(p2.getId())), 
+	TITLE((p1, p2) -> p1.getTitle().compareTo(p2.getTitle())),
+	DESCRIPTION((p1, p2) -> p1.getDescription().compareTo(p2.getDescription())), 
+	CUSTOMER((p1, p2) -> p1.getCustomer().compareTo(p2.getCustomer())), 
+	STARTED((p1, p2) -> p1.getStarted().compareTo(p2.getStarted())), 
+	STATUS((p1, p2) -> (p1.getStatus().toString()).compareTo((p2.getStatus().toString())));
 
 	private Comparator<Project> comparator;
 
@@ -46,5 +21,5 @@ public enum ProjectProperties {
 	public Comparator<Project> getComparator() {
 		return comparator;
 	}
-	
+
 }

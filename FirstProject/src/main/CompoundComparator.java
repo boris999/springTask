@@ -3,12 +3,13 @@ package main;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class CompoundComparator<T> implements Comparator<T> {
 
 	private List<Comparator<T>> comparatorsList = new ArrayList<Comparator<T>>();
 
-	CompoundComparator(List<Comparator<T>> listOfComparators) {
+	public CompoundComparator(List<Comparator<T>> listOfComparators) {
 		this.comparatorsList = listOfComparators;
 	}
 
@@ -25,4 +26,9 @@ public class CompoundComparator<T> implements Comparator<T> {
 		return result;
 	}
 
+	
+
+	
+	
+	
 }

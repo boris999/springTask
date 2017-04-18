@@ -12,8 +12,9 @@ import java.util.regex.Pattern;
 import entities.Employee;
 import enums.EmployeeProperties;
 import enums.EmployeeStatus;
+import enums.ProjectStatus;
 
-public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
+public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 
 	private static final String FILE_ID = "id";
 	private static final Pattern PATTERN = Pattern.compile("^employee_(?<" + FILE_ID + ">.*)(\\.txt)$",
@@ -39,14 +40,40 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 
 	@Override
 	public Employee readObject(String id, Map<String, String> readProperties) {
+		Integer age = parseandCheckString(readProperties.get(AGE));
+		Integer professionalExpereince = parseandCheckString(readProperties.get(PROFESSIONAL_EXPERIENCE));
 		String firstName = readProperties.get(FIRST_NAME);
 		String lastName = readProperties.get(LAST_NAME);
-		String age = readProperties.get(AGE);
-		String professionalExpereince = readProperties.get(PROFESSIONAL_EXPERIENCE);
 		String status = readProperties.get(STATUS).toUpperCase();
-		EmployeeStatus es = EmployeeStatus.valueOf(status);
+		EmployeeStatus es = buildEnum(status);
 
+		if (age == null || professionalExpereince == null || firstName == null || lastName == null || es == null) {
+			return null;
+		}
 		return new Employee(id, firstName, lastName, age, professionalExpereince, es);
+	}
+
+	private Integer parseandCheckString(String property) {
+		Integer valueToreturn = null;
+		try {
+			valueToreturn = Integer.parseInt(property);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		if (valueToreturn > 0) {
+			return valueToreturn;
+		}
+		return null;
+	}
+
+	private EmployeeStatus buildEnum(String status) {
+		EmployeeStatus ps = null;
+		try {
+			ps = EmployeeStatus.valueOf(status);
+		} catch (IllegalArgumentException e) {
+			return null;
+		}
+		return ps;
 	}
 
 	@Override
@@ -63,10 +90,10 @@ public class EmployeeObjectBuilder implements ObjectBuilder<Employee> {
 		List<EmployeeProperties> employeeEnumList = new ArrayList<>();
 		for (String prop : properties) {
 			EmployeeProperties effective = FIELD_TO_PROPERTY_MAP.get(prop);
-			if (effective == null) {
-
+			if (effective != null) {
+				employeeEnumList.add(effective);
 			}
-			employeeEnumList.add(effective);
+
 		}
 		return Employee.getComparatorList(employeeEnumList);
 	}

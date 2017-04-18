@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import objectBuilders.ObjectBuilder;
 
@@ -26,28 +24,23 @@ public class TxtFileReader {
 			if (id == null) {
 				continue;
 			}
-			Map<String, String> fileMap = readFile(f);
-			fileMap.put("idlength", String.valueOf(id.length()));
-			T object = builder.readObject(id, fileMap);
-			result.add(object);
+			List<String> fileStringList = readFile(f, id);
+			T object = builder.readList(fileStringList, id);
+			if (object != null) {
+				result.add(object);
+			}
 		}
 		return result;
 	}
 
-	private static Map<String, String> readFile(File file) {
-		Map<String, String> fileMap = new HashMap<String, String>();
+	private static List<String> readFile(File file, String id) {
+		List<String> lines = null;
 		try {
-			List<String> lines = Files.readAllLines(file.toPath());
-			for (String line : lines) {
-				String[] currentLineSplit = line.split("=");
-				fileMap.put(currentLineSplit[0], currentLineSplit[1]);
-				fileMap.put(currentLineSplit[0] + "length",
-						String.valueOf((currentLineSplit[0].length() >= currentLineSplit[1].length()
-								? currentLineSplit[0].length() : currentLineSplit[1].length())));
-			}
+			lines = Files.readAllLines(file.toPath());
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return fileMap;
+		return lines;
 	}
 }
