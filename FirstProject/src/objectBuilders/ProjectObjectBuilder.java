@@ -3,7 +3,6 @@ package objectBuilders;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,18 +35,6 @@ public class ProjectObjectBuilder implements ObjectBuilder<Project> {
 		modifyableMap.put(STARTED, ProjectProperties.STARTED);
 		modifyableMap.put(STATUS, ProjectProperties.STATUS);
 		FIELD_TO_PROPERTY_MAP = Collections.unmodifiableMap(modifyableMap);
-	}
-
-	public Map<ProjectProperties, Integer> readLength(String id, Map<String, String> properties,
-			Map<?, Integer> wordLengthMap) {
-		Map<ProjectProperties, Integer> mapToReturn = new HashMap<>();
-		for (String s : FIELD_TO_PROPERTY_MAP.keySet()) {
-			Integer oldvalue = wordLengthMap.get(FIELD_TO_PROPERTY_MAP.get(s)) == null ? 0
-					: wordLengthMap.get(FIELD_TO_PROPERTY_MAP.get(s));
-			Integer newValue = Integer.parseInt(properties.get(s + "length"));
-			mapToReturn.put(FIELD_TO_PROPERTY_MAP.get(s), oldvalue >= newValue ? oldvalue : newValue);
-		}
-		return mapToReturn;
 	}
 
 	@Override

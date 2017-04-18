@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import entities.Employee;
+import entities.Project;
 import objectBuilders.EmployeeObjectBuilder;
 import objectBuilders.ObjectBuilder;
 import objectBuilders.ProjectObjectBuilder;
@@ -21,21 +23,25 @@ public class Print {
 	private static String typeOfTheFile;
 	private static List<String> sortBy = new ArrayList<String>();
 
+
 	public static <T> void main(String[] args) {
 		try {
 			checkArguments(args);
 			boolean isEmployee = EMPLOYEE.equalsIgnoreCase(typeOfTheFile);
 			boolean isProject = PROJECT.equalsIgnoreCase(typeOfTheFile);
 			TxtFileReader txtReaderObject = new TxtFileReader();
+			
 			if (isEmployee) {
-				EmployeeObjectBuilder converter = new EmployeeObjectBuilder();
-				EmployeePrinter ep = new EmployeePrinter(txtReaderObject);
-				printEntities(converter, sortBy, txtReaderObject, ep);
+				ObjectBuilder<Employee> converter = new EmployeeObjectBuilder();
+				List<Employee> entities = txtReaderObject.readDirectory(directory, converter);
+				ObjectPrinter<Employee> ep = new EmployeePrinter(entities);
+				printEntities(converter, sortBy, txtReaderObject, entities, ep);
 			}
 			if (isProject) {
-				ProjectObjectBuilder converter = new ProjectObjectBuilder();
-				ProjectPrinter pp = new ProjectPrinter(txtReaderObject);
-				printEntities(converter, sortBy, txtReaderObject, pp);
+				ObjectBuilder<Project> converter = new ProjectObjectBuilder();
+				List<Project> entities = txtReaderObject.readDirectory(directory, converter);
+				ObjectPrinter<Project> pp = new ProjectPrinter(entities);
+				printEntities(converter, sortBy, txtReaderObject, entities, pp);
 			}
 
 		} catch (IllegalArgumentException e) {
@@ -44,6 +50,15 @@ public class Print {
 
 	}
 
+	private static <T> void printEntities(ObjectBuilder<T> converter, List<String> sortBy, TxtFileReader txtReaderObject, List<T> entities, ObjectPrinter<T> objectPrinter) {
+		CompoundComparator<T> cComparator = new CompoundComparator<>(converter.getComparator(sortBy));
+		Collections.sort(entities, cComparator);
+		try (PrintWriter pw = new PrintWriter(System.out)) {
+			objectPrinter.printObjects(entities, pw);
+		}
+	}
+
+	
 	private static void checkArguments(String[] args) {
 		if (args.length < 3) {
 			throw new IllegalArgumentException("Please provide enough parameters to run the program");
@@ -61,15 +76,4 @@ public class Print {
 			sortBy.add(args[i]);
 		}
 	}
-
-	private static <T> void printEntities(ObjectBuilder<T> converter, List<String> sortBy,
-			TxtFileReader txtReaderObject, ObjectPrinter<T> objectPrinter) {
-		CompoundComparator<T> cComparator = new CompoundComparator<>(converter.getComparator(sortBy));
-		List<T> entities = txtReaderObject.readDirectory(directory, converter);
-		Collections.sort(entities, cComparator);
-		try (PrintWriter pw = new PrintWriter(System.out)) {
-			objectPrinter.printObjects(entities, pw);
-		}
-	}
-
 }

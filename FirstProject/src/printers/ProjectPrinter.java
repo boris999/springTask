@@ -1,72 +1,50 @@
 package printers;
 
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 
 import entities.Project;
-import enums.ProjectProperties;
-import main.TxtFileReader;
 
 public class ProjectPrinter extends ObjectPrinter<Project> {
 
-	public ProjectPrinter(TxtFileReader textFileReader) {
-		super(textFileReader);
+	private static final String ID = "Id";
+	private static final String TITLE = "Title";
+	private static final String DESCRIPTION = "Description";
+	private static final String CUSTOMER = "Customer";
+	private static final String STARTED = "Started";
+	private static final String STATUS = "Status";
+
+	public ProjectPrinter(List<Project> entities) {
+		super(entities);
 	}
 
 	@Override
 	protected List<String> getColumns() {
-		return Arrays.asList("Id", "Title", "Description", "Customer", "Started", "Status");
-	}
-
-	@Override
-	protected List<String> getColumnValues() {
-		return Arrays.asList(String.format(formatString(ProjectProperties.ID), "Id"),
-				String.format(formatString(ProjectProperties.TITLE), "Title"),
-				String.format(formatString(ProjectProperties.DESCRIPTION), "Description"),
-				String.format(formatString(ProjectProperties.CUSTOMER), "Customer"),
-				String.format(formatString(ProjectProperties.STARTED), "Started"),
-				String.format(formatString(ProjectProperties.STATUS), "Status"));
+		return Arrays.asList(ID, TITLE, DESCRIPTION, CUSTOMER, STARTED, STATUS);
 	}
 
 	@Override
 	protected String getValue(String column, Project item) {
 		switch (column) {
 		case "Id":
-			return String.format(formatString(ProjectProperties.ID), item.getId());
+			return item.getId();
 
 		case "Title":
-			return String.format(formatString(ProjectProperties.TITLE), item.getTitle());
+			return item.getTitle();
 
 		case "Description":
-			return String.format(formatString(ProjectProperties.DESCRIPTION), item.getDescription());
+			return item.getDescription();
 
 		case "Customer":
-			return String.format(formatString(ProjectProperties.CUSTOMER), item.getCustomer());
+			return item.getCustomer();
 
 		case "Started":
-			return String.format(formatString(ProjectProperties.STARTED), item.getStarted());
+			return item.getStarted();
 
 		case "Status":
-			return String.format(formatString(ProjectProperties.STATUS), item.getStatus().toString());
+			return item.getStatus().toString();
 
 		}
 		return null;
 	}
-
-	private String formatString(ProjectProperties pp) {
-		return "%" + (getTextFileReader().getWordLengthMap().get(pp) + FREE_SPACE_PER_CELL) + "s";
-	}
-
-	public void printObject(int totalLength, Project t, PrintWriter writer) {
-		writer.print("|");
-		for (String s : getColumns()) {
-			writer.print(getValue(s, t));
-			writer.print("|");
-		}
-		writer.println();
-		printLine("-", totalLength, writer);
-		writer.println();
-	}
-
 }

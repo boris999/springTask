@@ -12,8 +12,6 @@ import objectBuilders.ObjectBuilder;
 
 public class TxtFileReader {
 
-	public Map<?, Integer> wordLengthMap = new HashMap<>();
-
 	public <T> List<T> readDirectory(File directory, ObjectBuilder<T> builder) {
 
 		File[] files = directory.listFiles();
@@ -31,7 +29,6 @@ public class TxtFileReader {
 			Map<String, String> fileMap = readFile(f);
 			fileMap.put("idlength", String.valueOf(id.length()));
 			T object = builder.readObject(id, fileMap);
-			wordLengthMap = builder.readLength(id, fileMap, wordLengthMap);
 			result.add(object);
 		}
 		return result;
@@ -53,9 +50,4 @@ public class TxtFileReader {
 		}
 		return fileMap;
 	}
-
-	public Map<?, Integer> getWordLengthMap() {
-		return wordLengthMap;
-	}
-
 }

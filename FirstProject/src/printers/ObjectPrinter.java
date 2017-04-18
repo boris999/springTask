@@ -1,53 +1,73 @@
 package printers;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
-
-import main.TxtFileReader;
+import java.util.Map;
 
 public abstract class ObjectPrinter<T> {
 	static final int FREE_SPACE_PER_CELL = 4;
+	private Map<String, Integer> columnsWidthMap;
 
-	private TxtFileReader textFileReader;
 
-	public ObjectPrinter(TxtFileReader textFileReader) {
-		this.textFileReader = textFileReader;
+	public ObjectPrinter(List<T> entities) {
+		this.columnsWidthMap = getColumnWidths(entities);
 	}
 
-	protected abstract List<String> getColumnValues();
-
+	
+	private Map<String, Integer> getColumnWidths(List<T> entities) {
+		Map<String, Integer> mapToReturn = new HashMap<>();
+		for(String s :getColumns()){
+			mapToReturn.put(s, s.length());
+		}
+		for(T t : entities){
+			for(String s :getColumns()){
+				Integer oldColumLength = mapToReturn.get(s);
+				Integer newColumnLength = getValue(s, t).length();
+				if(newColumnLength > oldColumLength){
+					mapToReturn.put(s, newColumnLength);
+				}
+			}
+		}
+		return mapToReturn;
+	};
 	protected abstract List<String> getColumns();
 
 	protected abstract String getValue(String column, T item);
-
-	protected abstract void printObject(int totalLength, T t, PrintWriter writer);
-
+	
 	public void printObjects(List<T> entities, PrintWriter writer) {
 		int totalLength = calculateTotalLength();
 
 		printHeader(totalLength, writer);
 		for (T t : entities) {
-			printObject(totalLength, t, writer);
+			writer.print("|");
+			for (String s : getColumns()) {
+				writer.print(getFormatedString(getValue(s, t), s));
+				writer.print("|");
+			}
+			writer.println();
+			printLine("-", totalLength, writer);
+			writer.println();
 		}
 		writer.flush();
 	}
 
 	private int calculateTotalLength() {
 		int totalLength = 1;
-		int numberOfElementsToPrint = textFileReader.getWordLengthMap().values().size();
-		for (Integer length : textFileReader.getWordLengthMap().values()) {
+		int numberOfElementsToPrint = columnsWidthMap.values().size();
+		for (Integer length : columnsWidthMap.values()) {
 			totalLength += length + 1;
 		}
 		totalLength = totalLength + (numberOfElementsToPrint) * FREE_SPACE_PER_CELL;
 		return totalLength;
 	}
 
-	public void printHeader(int totalLength, PrintWriter writer) {
+	private void printHeader(int totalLength, PrintWriter writer) {
 		printLine("=", totalLength, writer);
 		writer.println();
 		writer.print("|");
-		for (String s : getColumnValues()) {
-			writer.print(s);
+		for (String s : getColumns()) {
+			writer.print(getFormatedString(s, s));
 			writer.print("|");
 		}
 		writer.println();
@@ -62,8 +82,12 @@ public abstract class ObjectPrinter<T> {
 		}
 	}
 
-	public TxtFileReader getTextFileReader() {
-		return textFileReader;
+	private String formaterForString(String columnName) {
+		return "%" + (columnsWidthMap.get(columnName) + FREE_SPACE_PER_CELL) + "s";
 	}
-
+	
+	private String getFormatedString(String toBeFormated, String columnName){
+		return String.format(formaterForString(columnName), toBeFormated);
+	}
+	
 }

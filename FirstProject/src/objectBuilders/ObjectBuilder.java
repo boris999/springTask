@@ -14,6 +14,5 @@ public interface ObjectBuilder<T> {
 
 	List<Comparator<T>> getComparator(List<String> properties);
 
-	Map<?, Integer> readLength(String id, Map<String, String> properties, Map<?, Integer> wordLengthMap);
 
 }
