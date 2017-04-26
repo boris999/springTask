@@ -1,10 +1,8 @@
 package objectBuilders;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +10,6 @@ import java.util.regex.Pattern;
 import entities.Employee;
 import enums.EmployeeProperties;
 import enums.EmployeeStatus;
-import enums.ProjectStatus;
 
 public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 
@@ -24,7 +21,7 @@ public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 	private static final String FIRST_NAME = "first_name";
 	private static final String LAST_NAME = "last_name";
 	private static final String AGE = "age";
-	private static final String PROFESSIONAL_EXPERIENCE = "professional_expereince";
+	private static final String PROFESSIONAL_EXPERIENCE = "professional_experience";
 	private static final String STATUS = "status";
 
 	static {
@@ -40,8 +37,8 @@ public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 
 	@Override
 	public Employee readObject(String id, Map<String, String> readProperties) {
-		Integer age = parseandCheckString(readProperties.get(AGE));
-		Integer professionalExpereince = parseandCheckString(readProperties.get(PROFESSIONAL_EXPERIENCE));
+		Integer age = parseAndCheckString(readProperties.get(AGE));
+		Integer professionalExpereince = parseAndCheckString(readProperties.get(PROFESSIONAL_EXPERIENCE));
 		String firstName = readProperties.get(FIRST_NAME);
 		String lastName = readProperties.get(LAST_NAME);
 		String status = readProperties.get(STATUS).toUpperCase();
@@ -53,7 +50,7 @@ public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 		return new Employee(id, firstName, lastName, age, professionalExpereince, es);
 	}
 
-	private Integer parseandCheckString(String property) {
+	private Integer parseAndCheckString(String property) {
 		Integer valueToreturn = null;
 		try {
 			valueToreturn = Integer.parseInt(property);
@@ -85,19 +82,6 @@ public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 		return id;
 	}
 
-	@Override
-	public List<Comparator<Employee>> getComparator(List<String> properties) {
-		List<EmployeeProperties> employeeEnumList = new ArrayList<>();
-		for (String prop : properties) {
-			EmployeeProperties effective = FIELD_TO_PROPERTY_MAP.get(prop);
-			if (effective != null) {
-				employeeEnumList.add(effective);
-			}
-
-		}
-		return Employee.getComparatorList(employeeEnumList);
-	}
-
 	public String regexChecker(String toCheck, Pattern pattern) {
 		Matcher match = pattern.matcher(toCheck);
 		String id = null;
@@ -105,6 +89,11 @@ public class EmployeeObjectBuilder extends ObjectBuilder<Employee> {
 			id = match.group("id");
 		}
 		return id;
+	}
+
+	@Override
+	public Comparator<Employee> getSingleComparator(String compareBy) {
+		return FIELD_TO_PROPERTY_MAP.get(compareBy).getEnumComparator();
 	}
 
 }

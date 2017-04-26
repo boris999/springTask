@@ -7,7 +7,7 @@ import java.util.List;
 import enums.ProjectProperties;
 import enums.ProjectStatus;
 
-public final class Project {
+public final class Project implements Comparator<Project>{
 	private final String id;
 	private final String title;
 	private final String description;
@@ -48,10 +48,29 @@ public final class Project {
 		return id;
 	}
 
+//	public static int compareId(Project p1, Project p2){
+//		return p1.getId().compareTo(p2.getId());
+//	}
+//	public static int compareTitle(Project p1, Project p2){
+//		return p1.getTitle().compareTo(p2.getTitle());
+//	}
+//	public static int compareDescription(Project p1, Project p2){
+//		return p1.getDescription().compareTo(p2.getDescription());
+//	}
+//	public static int compareCustomer(Project p1, Project p2){
+//		return p1.getCustomer().compareTo(p2.getCustomer());
+//	}
+//	public static int compareStarted(Project p1, Project p2){
+//		return p1.getStarted().compareTo(p2.getStarted());
+//	}
+//	public static int compareStatus(Project p1, Project p2){
+//		return p1.getStatus().toString().compareTo(p2.getStatus().toString());
+//	}
+	
 	public static List<Comparator<Project>> getComparatorList(List<ProjectProperties> properties) {
 		List<Comparator<Project>> projectComaratorList = new ArrayList<Comparator<Project>>();
 		for (ProjectProperties pp : properties) {
-			projectComaratorList.add(pp.getComparator());
+			projectComaratorList.add(pp.getEnumComparator());
 		}
 		return projectComaratorList;
 	}
@@ -106,6 +125,12 @@ public final class Project {
 		} else if (!title.equals(other.title))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compare(Project o1, Project o2) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

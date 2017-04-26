@@ -52,10 +52,29 @@ public final class Employee {
 	public static List<Comparator<Employee>> getComparatorList(List<EmployeeProperties> properties) {
 		List<Comparator<Employee>> employeeComaratorList = new ArrayList<Comparator<Employee>>();
 		for (EmployeeProperties ep : properties) {
-			employeeComaratorList.add(ep.getComparator());
+			employeeComaratorList.add(ep.getEnumComparator());
 		}
 		return employeeComaratorList;
 	}
+
+//	public static int compareFirstName(Employee e1, Employee e2){
+//		return e1.getFirstName().compareTo(e2.getFirstName());
+//	}
+//	public static int compareLastName(Employee e1, Employee e2){
+//		return e1.getLastName().compareTo(e2.getLastName());
+//	}
+//	public static int compareAge(Employee e1, Employee e2){
+//		return e1.getAge()-(e2.getAge());
+//	}
+//	public static int compareProfessionalExpereince(Employee e1, Employee e2){
+//		return e1.getProfessionalExpereince()-(e2.getProfessionalExpereince());
+//	}
+//	public static int compareId(Employee e1, Employee e2){
+//		return e1.getId().compareTo(e2.getId());
+//	}
+//	public static int compareStatus(Employee e1, Employee e2){
+//		return e1.getStatus().toString().compareTo(e2.getStatus().toString());
+//	}
 
 	@Override
 	public int hashCode() {
@@ -102,7 +121,11 @@ public final class Employee {
 			return false;
 		return true;
 	}
+	
 
+	
+
+	
 	
 	
 }

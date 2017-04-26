@@ -7,17 +7,40 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import entities.Project;
 import enums.ProjectStatus;
-import main.CompoundComparator;
 import objectBuilders.ProjectObjectBuilder;
 
 public class TestProjectBuilder {
-	Project projectOne = new Project("124", "FristProject", "FirstProjectDescription", "CustomerOne", "23.04.2016", ProjectStatus.INACTIVE);
-	Project projectTwo = new Project("123", "SecondProject", "SecondProjectDescription", "CustomerTwo", "27.02.2016", ProjectStatus.ACTIVE);
-	ArrayList<Project> projectListOneTwo = new ArrayList<>(Arrays.asList(projectOne, projectTwo));
+	private final Project projectOne = new Project("124", "FristProject", "FirstProjectDescription", "CustomerOne", "23.04.2016", ProjectStatus.INACTIVE);
+	private final Project projectTwo = new Project("123", "SecondProject", "SecondProjectDescription", "CustomerTwo", "27.02.2016", ProjectStatus.ACTIVE);
+	
+	
+
+	private ArrayList<Project> getProjectList() {
+		return new ArrayList<>(Arrays.asList(projectOne, projectTwo));
+	}
+	
+	private ArrayList<Project> getProjectReverseList() {
+		return new ArrayList<>(Arrays.asList(projectTwo, projectOne));
+	}
+	
+	@Test
+	public void testComparatorTitleDescription(){
+		Project extraProject = new Project("dsfs", "FristProject", "Adescription", "CustomerThree", "31.01.2017", ProjectStatus.ACTIVE);
+		List<Project> sortable = getProjectList();
+		sortable.add(extraProject);
+		List<Project> expected = getProjectList();
+		expected.add(0, extraProject);
+		Collections.sort(sortable, new ProjectObjectBuilder().getComparator(Arrays.asList("title", "description")));
+		Assert.assertEquals(expected, sortable);
+	}
+	
+	
+	
 	
 
 	@Test
@@ -53,55 +76,43 @@ public class TestProjectBuilder {
 
 	@Test
 	public void testCompatorTitle(){
-		//one - FristProject, two SecondProject
-		assertEquals(getFirstElementBy("title"), projectOne);
+		checkSorting("title", getProjectList());
 	
 	}
 
 	@Test
 	public void testCompatorDescription(){
-		//one - FristProjectDescription, two SecondProjectDescription
-		assertEquals(getFirstElementBy("description"), projectOne);
+		checkSorting("description", getProjectList());
 	
 	}
 	
 	@Test
 	public void testCompatorCustomer(){
-		//one - CustomerOne, two CustomerTwo
-		assertEquals(getFirstElementBy("customer"), projectOne);
+		checkSorting("customer", getProjectList());
 	
 	}
 	
 	@Test
 	public void testCompatorStarted(){
-		//one - 23.04.2016, two 27.02.2016
-		assertEquals(getFirstElementBy("started"), projectOne);
-	
+		checkSorting("started", getProjectList());
 	}
 	
 	@Test
 	public void testCompatorId(){
-		//one - 124, two 123
-		assertEquals(getFirstElementBy("id"), projectTwo);
+		checkSorting("id", getProjectReverseList());
 	
 	}
 	
 	@Test
 	public void testCompatorStatus(){
-		//one - inactive, two active
-		assertEquals(getFirstElementBy("status"), projectTwo);
+		checkSorting("status", getProjectReverseList());
 	
 	}
 	
-	
-	
-	
-	private Project getFirstElementBy(String sortBy) {
-		List<String> sortProperties = Arrays.asList(sortBy);
-		ProjectObjectBuilder pob = new ProjectObjectBuilder();
-		pob.getComparator(sortProperties);
-		CompoundComparator<Project> cComparatorTitle = new CompoundComparator<Project>(pob.getComparator(sortProperties));
-		Collections.sort(projectListOneTwo, cComparatorTitle);
-		return projectListOneTwo.get(0);
+	private void checkSorting(String sortBy, List<Project> expected) {
+		List<Project> projects = getProjectList();
+		Collections.sort(projects, new ProjectObjectBuilder().getComparator(Arrays.asList(sortBy)));
+		Assert.assertEquals(expected, projects);
 	}
+
 }

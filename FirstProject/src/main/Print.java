@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import entities.Employee;
@@ -51,7 +52,7 @@ public class Print {
 	}
 
 	private static <T> void printEntities(ObjectBuilder<T> converter, List<String> sortBy, TxtFileReader txtReaderObject, List<T> entities, ObjectPrinter<T> objectPrinter) {
-		CompoundComparator<T> cComparator = new CompoundComparator<>(converter.getComparator(sortBy));
+		Comparator<T> cComparator =converter.getComparator(sortBy);
 		Collections.sort(entities, cComparator);
 		try (PrintWriter pw = new PrintWriter(System.out)) {
 			objectPrinter.printObjects(entities, pw);

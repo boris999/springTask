@@ -1,10 +1,8 @@
 package objectBuilders;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +44,7 @@ public class ProjectObjectBuilder extends ObjectBuilder<Project> {
 		String status = properties.get(STATUS).toUpperCase();
 		ProjectStatus ps = buildEnum(status);
 
-		if(title == null || description == null || started == null || customer == null || ps == null){
+		if (title == null || description == null || started == null || customer == null || ps == null) {
 			return null;
 		}
 		return new Project(id, title, description, customer, started, ps);
@@ -54,9 +52,9 @@ public class ProjectObjectBuilder extends ObjectBuilder<Project> {
 
 	private ProjectStatus buildEnum(String status) {
 		ProjectStatus ps = null;
-		try{
-		ps = ProjectStatus.valueOf(status);}
-		catch(IllegalArgumentException e){
+		try {
+			ps = ProjectStatus.valueOf(status);
+		} catch (IllegalArgumentException e) {
 			return null;
 		}
 		return ps;
@@ -71,14 +69,6 @@ public class ProjectObjectBuilder extends ObjectBuilder<Project> {
 		return id;
 	}
 
-	public List<Comparator<Project>> getComparator(List<String> properties) {
-		List<ProjectProperties> projectEnumList = new ArrayList<ProjectProperties>();
-		for (String prop : properties) {
-			projectEnumList.add(FIELD_TO_PROPERTY_MAP.get(prop));
-		}
-		return Project.getComparatorList(projectEnumList);
-	}
-
 	public String regexChecker(String toCheck, Pattern pattern) {
 		Matcher match = pattern.matcher(toCheck);
 		String id = null;
@@ -86,5 +76,10 @@ public class ProjectObjectBuilder extends ObjectBuilder<Project> {
 			id = match.group("id");
 		}
 		return id;
+	}
+
+	@Override
+	public Comparator<Project> getSingleComparator(String compareBy) {
+		return FIELD_TO_PROPERTY_MAP.get(compareBy).getEnumComparator();
 	}
 }

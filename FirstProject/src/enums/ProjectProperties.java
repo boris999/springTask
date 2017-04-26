@@ -1,24 +1,28 @@
 package enums;
 
 import java.util.Comparator;
+import java.util.function.Function;
 
 import entities.Project;
 
 public enum ProjectProperties {
-	ID((p1, p2) -> p1.getId().compareTo(p2.getId())), 
-	TITLE((p1, p2) -> p1.getTitle().compareTo(p2.getTitle())),
-	DESCRIPTION((p1, p2) -> p1.getDescription().compareTo(p2.getDescription())), 
-	CUSTOMER((p1, p2) -> p1.getCustomer().compareTo(p2.getCustomer())), 
-	STARTED((p1, p2) -> p1.getStarted().compareTo(p2.getStarted())), 
-	STATUS((p1, p2) -> (p1.getStatus().toString()).compareTo((p2.getStatus().toString())));
+	ID(Project::getId), 
+	TITLE(Project::getTitle),
+	DESCRIPTION(Project::getDescription), 
+	CUSTOMER(Project::getCustomer), 
+	STARTED(Project::getStarted), 
+	STATUS(Comparator.comparing(Project::getStatus));
 
 	private Comparator<Project> comparator;
 
-	ProjectProperties(Comparator<Project> comparator) {
-		this.comparator = comparator;
+	ProjectProperties(Function<? super Project, ? extends String> keyExtractor) {
+		this.comparator = Comparator.comparing(keyExtractor);
 	}
 
-	public Comparator<Project> getComparator() {
+	ProjectProperties(Comparator<Project> comp) {
+		this.comparator = comp;
+	}
+	public Comparator<Project> getEnumComparator() {
 		return comparator;
 	}
 
