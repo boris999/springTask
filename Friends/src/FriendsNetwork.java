@@ -4,12 +4,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PersonBuilder {
+public class FriendsNetwork {
 
 	private Map<Person, Set<Person>> personsWithLists = new HashMap<>();
 	
-	public Map<Person, Set<Person>> readAllLines(List<String> linesList) {
-		linesList.parallelStream().forEach(s->createAndAddTwo(s));
+	public Map<Person, Set<Person>> readAllLines(String fileLocation) {
+		List<String> friendsData = Reader.readFile(fileLocation);
+		friendsData.parallelStream().forEach(s->createAndAddTwo(s));
 		return personsWithLists;
 	}
 
@@ -17,7 +18,6 @@ public class PersonBuilder {
 		String[] line = singleLine.split("-");
 		Person p1 = new Person(line[0], new Person(line[1]));
 		Person p2 = new Person(line[1], new Person(line[0]));
-
 		addPersonToTheMap(p1);
 		addPersonToTheMap(p2);
 	}

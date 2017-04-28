@@ -15,11 +15,6 @@ public class Person {
 		this.name = name;
 	}
 
-//	public int compareNames(Person p1, Person p2){
-//		return p1.getName().compareTo(p2.getName());
-//	}
-
-
 	public String getName() {
 		return name;
 	}
