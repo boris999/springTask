@@ -33,7 +33,7 @@ public class FriendLinkFinder {
 	private static void searchFreiends(Person p1, Person p2, HashMap<Person, Set<Person>> friendsMap,
 			List<Person> friendsChain) {
 		if (friendsMap.get(p1) != null) {
-			if (friendsMap.get(p1).isEmpty()) {
+			if (friendsMap.get(p1).isEmpty()) { 
 				friendsMap.remove(p1);
 				return;
 			} else {
