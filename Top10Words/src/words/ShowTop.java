@@ -4,13 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ShowTop {
 	private static Pattern pattern = Pattern.compile("(\\s-\\s)|\\b[[^\\p{L}]&&[^\\p{Lu}]&&[^\\d]&&[^\u0027]]|[[^\\p{L}]&&[^\\p{Lu}]&&[^\\d]&&[^\u0027]]+\\b");

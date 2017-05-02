@@ -3,18 +3,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FriendLinkFinder {
 
 	private static List<List<Person>> friendLink = new ArrayList<List<Person>>();
-	
-	
+	private static AtomicInteger links = new AtomicInteger(0);
+
 	public static void main(String[] args) {
 
 		friendsChain(new Person(args[1]), new Person(args[2]), new FriendsNetwork().readAllLines(args[0]));
 		System.out.println(friendLink);
 	}
-	
+
 	private static List<List<Person>> friendsChain(Person p1, Person p2, Map<Person, Set<Person>> friendsMap) {
 		if (p1.equals(p2) || friendsMap.get(p1).isEmpty() || friendsMap.get(p2).isEmpty()) {
 			return null;
@@ -23,15 +24,18 @@ public class FriendLinkFinder {
 		friendsChain.add(p1);
 
 		for (Person friend : friendsMap.get(p1)) {
-			searchFreiends(p1, p2, UtilityClass.copyMapAndRemoveFriend(friendsMap, friend, p1), friendsChain);
+			searchFreiends(p1, p2, UtilityClass.copyMapAndRemoveFriend(friendsMap, friend, p1), friendsChain, 0);
 		}
-
 
 		return friendLink;
 	}
-	
+
 	private static void searchFreiends(Person p1, Person p2, HashMap<Person, Set<Person>> friendsMap,
-			List<Person> friendsChain) {
+			List<Person> friendsChain, int depth) {
+		// int iterationNumber = links.get();
+		if (links.get() <= depth && links.get() != 0) {
+			return;
+		}
 		if (friendsMap.get(p1) != null) {
 			if (friendsMap.get(p1).isEmpty()) {
 				friendsMap.remove(p1);
@@ -40,6 +44,9 @@ public class FriendLinkFinder {
 				if (friendsMap.get(p1).contains(p2)) {
 					friendsChain.add(p2);
 					friendLink.add(new ArrayList<Person>(friendsChain));
+					if ((links.get() == 0 || (links.get() != 0 && links.get() > depth)) && depth != 0) {
+						links.set(depth);
+					}
 					return;
 				} else {
 					Set<Person> p1Friends = friendsMap.get(p1);
@@ -49,7 +56,7 @@ public class FriendLinkFinder {
 							friendsMap.get(p).remove(p1);
 						}
 						friendsChain.add(p);
-						searchFreiends(p, p2, friendsMap, new ArrayList<Person>(friendsChain));
+						searchFreiends(p, p2, friendsMap, new ArrayList<Person>(friendsChain), depth++);
 					}
 
 				}
@@ -57,5 +64,13 @@ public class FriendLinkFinder {
 		}
 		return;
 	}
+
+	// public static void removeOtherLines(Person p1, Person p2, HashMap<Person,
+	// Set<Person>> friendsMap, Person friendToRemove){
+	// if()
+	//
+	//
+	//
+	// }
 
 }

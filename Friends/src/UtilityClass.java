@@ -39,13 +39,13 @@ public class UtilityClass {
 		return copyOfFriendsMap;
 	}
 
-	private static <T> Set<T> copyAndRemoveFromSetAnotherSet(Set<T> set, Set<T> elements) {
+	public static <T> Set<T> copyAndRemoveFromSetAnotherSet(Set<T> set, Set<T> elements) {
 		Set<T> copy = new HashSet<T>(set);
 		copy.removeAll(elements);
 		return copy;
 	}
 
-	private static <T> Set<T> copyAndRemoveFromSet(Set<T> set, T element) {
+	public static <T> Set<T> copyAndRemoveFromSet(Set<T> set, T element) {
 		Set<T> copy = new HashSet<T>(set);
 		return removeFromSet(copy, element);
 	}

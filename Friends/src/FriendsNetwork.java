@@ -24,7 +24,7 @@ public class FriendsNetwork {
 
 	private synchronized void addPersonToTheMap(Person p1) {
 		personsWithLists.compute(p1, (k, v)->(v == null) ? k.getFriends() : combineSets(v, k.getFriends()));
-	
+		
 	}
 	
 	private <T> Set<T> combineSets(Set<T> first, Set<T> second){
