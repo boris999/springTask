@@ -8,7 +8,6 @@ import java.util.List;
 final class TxtFileReader {
 
 	private TxtFileReader() {
-
 	}
 
 	static List<String> readFile(String fileLocation) {

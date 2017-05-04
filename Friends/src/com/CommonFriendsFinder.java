@@ -1,42 +1,22 @@
 package com;
 
-import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CommonFriendsFinder {
-	private static Set<Pair<Person>> personSet = new HashSet<>();
 
 	public static void main(String[] args) {
+		List<String> lines = TxtFileReader.readFile(args[0]);
+		getCommonFriends(new FriendsNetworkBuilder().build(lines)).stream().forEach(System.out::println);
 
-		printCommonFriends(new FriendsNetworkBuilder().readAllLines(args[0]));
 	}
 
-	private synchronized static void concurrentAddToPersonSet(Pair<Person> pair) {
-		personSet.add(pair);
+	public static List<String> getCommonFriends(FriendsNetwork friendsNetwork) {
+		Set<Person> members = friendsNetwork.getAllNetworkMembers();
+		return members.stream().flatMap(m1 -> members.stream().map(m2 -> new Pair<>(m1, m2)))
+				.filter(pair -> !pair.getFirst().equals(pair.getSecond()))
+				.map(e -> friendsNetwork.getCommonFriendsFromPair(e))
+				.collect(Collectors.toList());
 	}
-
-	private static void printCommonFriends(Map<Person, Person> friendsMap) {
-		friendsMap.entrySet().parallelStream().forEach(e1 -> {
-			friendsMap.entrySet().parallelStream().forEach(e2 -> {
-				concurrentAddToPersonSet((new Pair<>(e1.getKey(), e2.getKey())));
-			});
-		});
-
-		personSet.stream().forEach(personPair -> printCommonFriendsFromList(personPair, friendsMap));
-	}
-
-	public static void printCommonFriendsFromList(Pair<Person> personPair, Map<Person, Person> personsMap) {
-		printCommonFriends(personPair.getFirst(), personPair.getSecond(), personsMap);
-	}
-
-	private static void printCommonFriends(Person p1, Person p2, Map<Person, Person> personsMap) {
-		if (p1.equals(p2)) {
-			return;
-		}
-		Set<Person> p1Friends = new HashSet<>(personsMap.get(p1).getFriends());
-		p1Friends.retainAll(personsMap.get(p2).getFriends());
-		System.out.println(p1 + " and " + p2 + " common frieds are -> " + p1Friends);
-	}
-
 }

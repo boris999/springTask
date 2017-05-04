@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Person {
 	private final String name;
-	private Set<Person> friends = new HashSet<>();
+	private final Set<Person> friends = new HashSet<>();
 
 	public Person(String name, Person friend) {
 		this(name);
@@ -22,10 +22,6 @@ public class Person {
 
 	public Set<Person> getFriends() {
 		return this.friends;
-	}
-
-	public void setFriends(Set<Person> friends) {
-		this.friends = friends;
 	}
 
 	@Override

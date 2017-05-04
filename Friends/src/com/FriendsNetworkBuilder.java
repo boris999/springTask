@@ -1,17 +1,24 @@
 package com;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FriendsNetworkBuilder {
+public final class FriendsNetworkBuilder {
 
-	public Map<Person, Person> readAllLines(String fileLocation) {
+	public FriendsNetworkBuilder() {
+	}
+
+	public FriendsNetwork build(List<String> lines) {
 		Map<Person, Person> personMap = new HashMap<>();
-		List<String> friendsData = TxtFileReader.readFile(fileLocation);
-		friendsData.stream().forEach(s -> this.createAndAddTwo(s, personMap));
-		return Collections.unmodifiableMap(personMap);
+		personMap = this.readAllLines(lines, personMap);
+		return new FriendsNetwork(personMap);
+
+	}
+
+	private Map<Person, Person> readAllLines(List<String> lines, Map<Person, Person> personMap) {
+		lines.stream().forEach(s -> this.createAndAddTwo(s, personMap));
+		return personMap;
 	}
 
 	private void createAndAddTwo(String singleLine, Map<Person, Person> personMap) {
