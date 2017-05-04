@@ -6,7 +6,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class UtilityClass {
+public final class UtilityClass {
+
+	// constants - static final (public -> private)
+	// static
+	// object fields - final -> non final
+	// constructor
+	// public methods (static -> non static) getters/setters
+	// private methods (static -> non static)
+
+	private UtilityClass() {
+
+	}
 
 	public static <T> HashMap<T, Set<T>> copyMapAndRemoveFriend(Map<T, Set<T>> friendsMap, T friend, T p1) {
 		HashMap<T, Set<T>> copyOfFriendsMap = new HashMap<>();
@@ -27,11 +38,9 @@ public class UtilityClass {
 				if (!entry.getKey().equals(t)) {
 					copyOffriendsMap.put(entry.getKey(), entry.getValue());
 				}
-
 			}
 		}
 		return copyOffriendsMap;
-
 	}
 
 	public static <T> Set<T> copyAndRemoveFromSetAnotherSet(Set<T> set, Set<T> elements) {
@@ -48,9 +57,6 @@ public class UtilityClass {
 	private static <T> Set<T> removeFromSet(Set<T> set, T element) {
 		set.remove(element);
 		return set;
-	}
-
-	private UtilityClass() {
 	}
 
 }

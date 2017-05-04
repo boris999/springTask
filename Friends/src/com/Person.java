@@ -1,9 +1,10 @@
 package com;
+
 import java.util.HashSet;
 import java.util.Set;
 
 public class Person {
-	private String name;
+	private final String name;
 	private Set<Person> friends = new HashSet<>();
 
 	public Person(String name, Person friend) {

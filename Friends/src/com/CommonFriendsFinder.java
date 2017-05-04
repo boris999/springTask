@@ -9,7 +9,7 @@ public class CommonFriendsFinder {
 
 	public static void main(String[] args) {
 
-		printCommonFriends(new FriendsNetwork().readAllLines(args[0]));
+		printCommonFriends(new FriendsNetworkBuilder().readAllLines(args[0]));
 	}
 
 	private synchronized static void concurrentAddToPersonSet(Pair<Person> pair) {
