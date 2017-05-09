@@ -1,5 +1,6 @@
 package com;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,10 @@ public final class FriendsNetwork {
 		Set<Person> p1Friends = new HashSet<>(this.personMap.get(p1).getFriends());
 		p1Friends.retainAll(this.personMap.get(p2).getFriends());
 		return p1 + " and " + p2 + " common friends are -> " + p1Friends;
+	}
+
+	public Map<Person, Person> getPersonMap() {
+		return new HashMap<>(this.personMap);
 	}
 
 }

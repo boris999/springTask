@@ -107,7 +107,7 @@ public class TestFriendLinkFinder {
 	@Test
 	public void testFriendLinkFinderNoLink() {
 		String[] array = { "Flavia-Miranda", "Miranda-Flavia", "Flavia-Ethel", "Flavia-Marta",
-				"Marta-John", "John-Petkan", "Donka-Kim", "Donka-Monica", "Miranda-Donka" };
+				"Marta-John", "Tsonka-Petkan", "Donka-Kim", "Donka-Monica", "Miranda-Donka" };
 		List<String> list = Arrays.asList(array);
 		FriendsNetwork fn = new FriendsNetworkBuilder().build(list);
 		List<List<Person>> result = FriendLinkFinder.findFriendsChain(new Person("Flavia"), new Person("Tsonka"), fn);
