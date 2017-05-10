@@ -1,0 +1,7 @@
+title=smallProject
+description=very small project
+                        
+customer=company A
+
+started=01.04.2017
+status=inactive

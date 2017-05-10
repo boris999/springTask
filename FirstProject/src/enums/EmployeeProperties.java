@@ -5,11 +5,11 @@ import java.util.Comparator;
 import entities.Employee;
 
 public enum EmployeeProperties {
-	ID(Comparator.comparing(Employee::getId)), 
-	FIRST_NAME(Comparator.comparing(Employee::getFirstName)), 
-	LAST_NAME(Comparator.comparing(Employee::getLastName)), 
-	AGE(Comparator.comparing(Employee::getAge)), 
-	PROFESSIONAL_EXPERIENCE(Comparator.comparing(Employee::getProfessionalExpereince)), 
+	ID(Comparator.comparing(Employee::getId)),
+	FIRST_NAME(Comparator.comparing(Employee::getFirstName)),
+	LAST_NAME(Comparator.comparing(Employee::getLastName)),
+	AGE(Comparator.comparing(Employee::getAge)),
+	PROFESSIONAL_EXPERIENCE(Comparator.comparing(Employee::getProfessionalExpereince)),
 	STATUS(Comparator.comparing(Employee::getStatus));
 
 	private final Comparator<Employee> comparator;
@@ -19,8 +19,7 @@ public enum EmployeeProperties {
 	}
 
 	public Comparator<Employee> getEnumComparator() {
-		return comparator;
+		return this.comparator;
 	}
-
 
 }

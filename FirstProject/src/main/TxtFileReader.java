@@ -19,28 +19,12 @@ public class TxtFileReader {
 		if (files.length == 0) {
 			throw new IllegalArgumentException("The directory provided is empty");
 		}
-		// List<T> result = new ArrayList<>();
-		// for (File f : files) {
-		// String currentFileName = f.getName();
-		//
-		// String id = builder.readId(currentFileName);
-		// if (id == null) {
-		// continue;
-		// }
-		// List<String> fileStringList = readFile(f, id);
-		// T object = builder.readList(fileStringList, id);
-		// if (object != null) {
-		// result.add(object);
-		// }
-		// }
-
 		return Arrays.stream(files).filter(f -> (builder.readId(f.getName()) != null))
 				.map(f -> readFile(f, builder.readId(f.getName())))
 				.map(b -> builder.readList(b, b.get(b.size() - 1)))
 				.filter(z -> z != null)
 				.collect(Collectors.toList());
 
-		// return result;
 	}
 
 	private static List<String> readFile(File file, String id) {

@@ -26,106 +26,93 @@ public final class Employee {
 	}
 
 	public String getFirstName() {
-		return firstName;
+		return this.firstName;
 	}
 
 	public String getLastName() {
-		return lastName;
+		return this.lastName;
 	}
 
 	public int getAge() {
-		return age;
+		return this.age;
 	}
 
 	public int getProfessionalExpereince() {
-		return professionalExpereince;
+		return this.professionalExpereince;
 	}
 
 	public EmployeeStatus getStatus() {
-		return status;
+		return this.status;
 	}
 
 	public String getId() {
-		return id;
+		return this.id;
 	}
 
 	public static List<Comparator<Employee>> getComparatorList(List<EmployeeProperties> properties) {
-		List<Comparator<Employee>> employeeComaratorList = new ArrayList<Comparator<Employee>>();
+		List<Comparator<Employee>> employeeComaratorList = new ArrayList<>();
 		for (EmployeeProperties ep : properties) {
 			employeeComaratorList.add(ep.getEnumComparator());
 		}
 		return employeeComaratorList;
 	}
 
-//	public static int compareFirstName(Employee e1, Employee e2){
-//		return e1.getFirstName().compareTo(e2.getFirstName());
-//	}
-//	public static int compareLastName(Employee e1, Employee e2){
-//		return e1.getLastName().compareTo(e2.getLastName());
-//	}
-//	public static int compareAge(Employee e1, Employee e2){
-//		return e1.getAge()-(e2.getAge());
-//	}
-//	public static int compareProfessionalExpereince(Employee e1, Employee e2){
-//		return e1.getProfessionalExpereince()-(e2.getProfessionalExpereince());
-//	}
-//	public static int compareId(Employee e1, Employee e2){
-//		return e1.getId().compareTo(e2.getId());
-//	}
-//	public static int compareStatus(Employee e1, Employee e2){
-//		return e1.getStatus().toString().compareTo(e2.getStatus().toString());
-//	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + age;
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result + professionalExpereince;
-		result = prime * result + ((status == null) ? 0 : status.hashCode());
+		result = (prime * result) + this.age;
+		result = (prime * result) + ((this.firstName == null) ? 0 : this.firstName.hashCode());
+		result = (prime * result) + ((this.id == null) ? 0 : this.id.hashCode());
+		result = (prime * result) + ((this.lastName == null) ? 0 : this.lastName.hashCode());
+		result = (prime * result) + this.professionalExpereince;
+		result = (prime * result) + ((this.status == null) ? 0 : this.status.hashCode());
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (this.getClass() != obj.getClass()) {
 			return false;
+		}
 		Employee other = (Employee) obj;
-		if (age != other.age)
+		if (this.age != other.age) {
 			return false;
-		if (firstName == null) {
-			if (other.firstName != null)
+		}
+		if (this.firstName == null) {
+			if (other.firstName != null) {
 				return false;
-		} else if (!firstName.equals(other.firstName))
+			}
+		} else if (!this.firstName.equals(other.firstName)) {
 			return false;
-		if (id == null) {
-			if (other.id != null)
+		}
+		if (this.id == null) {
+			if (other.id != null) {
 				return false;
-		} else if (!id.equals(other.id))
+			}
+		} else if (!this.id.equals(other.id)) {
 			return false;
-		if (lastName == null) {
-			if (other.lastName != null)
+		}
+		if (this.lastName == null) {
+			if (other.lastName != null) {
 				return false;
-		} else if (!lastName.equals(other.lastName))
+			}
+		} else if (!this.lastName.equals(other.lastName)) {
 			return false;
-		if (professionalExpereince != other.professionalExpereince)
+		}
+		if (this.professionalExpereince != other.professionalExpereince) {
 			return false;
-		if (status != other.status)
+		}
+		if (this.status != other.status) {
 			return false;
+		}
 		return true;
 	}
-	
 
-	
-
-	
-	
-	
 }

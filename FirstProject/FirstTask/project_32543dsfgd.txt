@@ -1,0 +1,5 @@
+title=mediumProject
+description=medium project
+customer=company F
+started=12.04.2017
+status=inactive

@@ -1,0 +1,5 @@
+first_name=Kiro
+last_name=Mishev
+age=23
+professional_expereince=34
+status=inactive
