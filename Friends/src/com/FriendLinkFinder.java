@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Stack;
 
 public class FriendLinkFinder {
 
@@ -18,10 +19,49 @@ public class FriendLinkFinder {
 
 	public static List<List<Person>> findFriendsChain(Person p1, Person p2, FriendsNetwork friendsNetwork) {
 		List<List<Person>> friendLink = new LinkedList<>();
-		searchFriends(p1, p2, friendsNetwork, new ArrayList<Person>(), new HashSet<Person>(), friendLink, 2);
+		// searchFriends(p1, p2, friendsNetwork, new ArrayList<Person>(), new HashSet<Person>(), friendLink, 2);//solved with recursion
+
+		// solved with stack
+		FriendLinkObject flo = new FriendLinkObject(p1, p2, friendsNetwork, new ArrayList<Person>(), new HashSet<Person>(), friendLink, 2);
+		Stack<FriendLinkObject> stack = new Stack<>();
+		stack.push(flo);
+		searchFriendsWithstack(stack);
+
 		return friendLink;
 	}
 
+	private static FriendLinkObject searchFriendsWithstack(Stack<FriendLinkObject> stack) {
+		FriendLinkObject flo = null;
+		while (!stack.isEmpty()) {
+			flo = stack.pop();
+			int depth = getMinsize(flo.getFriendLink());
+			if (!(flo.getCurrentDepth() >= depth) && (depth != 0)) {
+				Set<Person> p1Friends = flo.getFriendsNetwork().getFriendsOf(flo.getCurrentPerson());
+				flo.getAlreadyPassed().add(flo.getCurrentPerson());
+				flo.getAlreadyPassed().add(flo.getDestinationPerson());
+				flo.getFriendsChain().add(flo.getCurrentPerson());
+				if (p1Friends.contains(flo.getDestinationPerson())) {
+					flo.getFriendsChain().add(flo.getDestinationPerson());
+					if (flo.getFriendLink().size() != 0) {
+						flo.getFriendLink().remove(0);
+					}
+					flo.getFriendLink().add(flo.getFriendsChain());
+				} else {
+					flo.setCurrentDepth(flo.getCurrentDepth() + 1);
+					for (Person p : p1Friends) {
+						if (!flo.getAlreadyPassed().contains(p)) {
+							stack.push(new FriendLinkObject(p, flo.getDestinationPerson(), flo.getFriendsNetwork(),
+									new ArrayList<>(flo.getFriendsChain()), new HashSet<>(flo.getAlreadyPassed()), flo.getFriendLink(),
+									flo.getCurrentDepth()));
+						}
+					}
+				}
+			}
+		}
+		return flo;
+	}
+
+	@SuppressWarnings("unused")
 	private static void searchFriends(Person p1, Person p2, FriendsNetwork friendsNetwork, List<Person> friendsChain,
 			Set<Person> alreadyPassed, List<List<Person>> friendLink, int currentDepth) {
 		int depth = getMinsize(friendLink);
