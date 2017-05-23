@@ -1,14 +1,19 @@
 package com.model.expression;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.model.table.Cell;
+
 public class BinaryOperatorNode implements ExpressionTreeNode {
 	// TODO visibility
 	private ExpressionTreeNode left;
 	private ExpressionTreeNode right;
 	private BinaryOperator action;
 
-	public BinaryOperatorNode(ExpressionTreeNode left, ExpressionTreeNode rigth, BinaryOperator action) {
+	public BinaryOperatorNode(ExpressionTreeNode left, ExpressionTreeNode right, BinaryOperator action) {
 		this.left = left;
-		this.right = rigth;
+		this.right = right;
 		this.action = action;
 	}
 
@@ -20,7 +25,7 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 		this.left = left;
 	}
 
-	public ExpressionTreeNode getRigth() {
+	public ExpressionTreeNode getRight() {
 		return this.right;
 	}
 
@@ -106,6 +111,26 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 			break;
 		}
 		return "(" + this.left + sign + this.right + ")";
+	}
+
+	@Override
+	public double getValue() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public Set<Cell> getDependingCells() {
+		Set<Cell> tempSet = new HashSet<>();
+		Set<Cell> leftSet = this.left.getDependingCells();
+		Set<Cell> rightSet = this.right.getDependingCells();
+		if (leftSet != null) {
+			tempSet.addAll(leftSet);
+		}
+		if (rightSet != null) {
+			tempSet.addAll(rightSet);
+		}
+		return tempSet;
 	}
 
 }

@@ -1,9 +1,7 @@
 package com.serialize.expression;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.EmptyStackException;
 import java.util.Stack;
-import java.util.regex.Pattern;
 
 import com.model.expression.BinaryOperator;
 import com.model.expression.BinaryOperatorNode;
@@ -11,82 +9,141 @@ import com.model.expression.Condition;
 import com.model.expression.ExpressionTreeNode;
 import com.model.expression.ReferenceNode;
 import com.model.expression.ValueNode;
+import com.model.table.Cell;
 
 public final class ExpressionTreeFactory {
-	private static Pattern letterPattern = Pattern.compile("([\\w&&[^\\d_]])");
-	private Pattern operatorPattern = Pattern.compile("[+-^*//]");
-	private Pattern digitPattern = Pattern.compile("[0-9.]");
+	// private static Pattern letterPattern = Pattern.compile("([\\w&&[^\\d_]])");
+	// private Pattern operatorPattern = Pattern.compile("[+-^*//]");
+	// private Pattern digitPattern = Pattern.compile("[0-9.]");
 
 	private ExpressionTreeFactory() {
 	}
 
 	public static ExpressionTreeNode parseExpression(String expression) {
+		expression = fixToPower(removeSigns(removeEmptyCheckBracketsAndStartEnd(expression)));
 		Stack<ExpressionTreeNode> stack = new Stack<>();
 		Stack<BinaryOperator> operatorStack = new Stack<>();
-		return parseExpressionAndNodeStack(expression, stack, operatorStack);
-
-	}
-
-	public static ExpressionTreeNode parseExpressionAndNodeStack(String expression, Stack<ExpressionTreeNode> stack,
-			Stack<BinaryOperator> operatorStack) {
 		char[] array = expression.toCharArray();
 		StringBuilder sb = new StringBuilder("");
 		Condition hasLetter = Condition.NOT_EVALUATED;
 		Condition hasDigit = Condition.NOT_EVALUATED;
 		boolean missingRight = false;
 		boolean startingOperatorConsumed = false;
+		boolean missingRightBracketNotClosed = false;
+		int openingBracketsInStack = 0;
 		for (char c : array) {
-			if (c == ' ') {
-				continue;
-			}
 			hasLetter = hasLetter(c, hasLetter);
 			hasDigit = hasDigit(c, hasDigit);
-			// TODO to add ( to the check for operator and another else if when there is )
+			// if operator -> +-*/^()
 			if (isOperator(c)) {
-				if (!startingOperatorConsumed && stack.isEmpty() && sb.toString().equals("")) {
+				// if starts with -
+				if (!startingOperatorConsumed && stack.isEmpty() && sb.toString().equals("") && !isBracket(c)) {
 					sb.append("0");
 					startingOperatorConsumed = true;
 					hasDigit = Condition.TRUE;
 				}
 				boolean isPriorityOperator = isPriorityOperator(c);
 				int operatorstackSize = operatorStack.size();
-				if (missingRight) {// no right node
-					ExpressionTreeNode previous = stack.pop();
+				if (missingRight && !missingRightBracketNotClosed && !isOpeningBracket(c)) {// no right node
+					if (!isEmpty(sb)) {
+						ExpressionTreeNode previous = stack.pop();
+						sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
+						hasLetter = Condition.NOT_EVALUATED;
+						hasDigit = Condition.NOT_EVALUATED;
+						ExpressionTreeNode lastNode = stack.pop();
+						((BinaryOperatorNode) previous).setRigth(lastNode);
+						stack.push(previous);
+						if (!isClosingBracket(c)) {
+							operatorStack.push(getOperator(c));
+						} else {
+							BinaryOperator last = operatorStack.pop();
+							sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
+							hasLetter = Condition.NOT_EVALUATED;
+							hasDigit = Condition.NOT_EVALUATED;
+							while (last != BinaryOperator.BRACKET) {
+								ExpressionTreeNode right = stack.pop();
+								ExpressionTreeNode left = stack.pop();
+								BinaryOperatorNode tempNode = new BinaryOperatorNode(left, right, last);
+								stack.push(tempNode);
+								last = operatorStack.pop();
+							}
+							openingBracketsInStack--;
+						}
+						missingRight = false;
+					} else {
+						ExpressionTreeNode last = stack.pop();
+						ExpressionTreeNode beforeLast = stack.pop();
+						((BinaryOperatorNode) beforeLast).setRigth(last);
+						stack.push(beforeLast);
+						missingRight = false;
+						operatorStack.push(getOperator(c));
+					}
+				} else if (!isPriorityOperator && ((operatorstackSize - openingBracketsInStack) == 0) && !isBracket(c)) {
 					sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
 					hasLetter = Condition.NOT_EVALUATED;
 					hasDigit = Condition.NOT_EVALUATED;
-					ExpressionTreeNode last = stack.pop();
-					((BinaryOperatorNode) previous).setRigth(last);
-					stack.push(previous);
 					operatorStack.push(getOperator(c));
-					missingRight = false;
-				} else if (!isPriorityOperator && (operatorstackSize == 0)) {
+				} else if (!isPriorityOperator && ((operatorstackSize - openingBracketsInStack) > 0) && !isBracket(c)) {
 					sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
 					hasLetter = Condition.NOT_EVALUATED;
 					hasDigit = Condition.NOT_EVALUATED;
+					if (operatorStack.peek() != BinaryOperator.BRACKET) {
+						ExpressionTreeNode right = stack.pop();
+						ExpressionTreeNode left = stack.pop();
+						BinaryOperator previousOperator = operatorStack.pop();
+						BinaryOperatorNode node = new BinaryOperatorNode(left, right, previousOperator);
+						stack.push(node);
+					}
 					operatorStack.push(getOperator(c));
-				} else if (!isPriorityOperator && (operatorstackSize == 1)) {
-					sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
-					hasLetter = Condition.NOT_EVALUATED;
-					hasDigit = Condition.NOT_EVALUATED;
-					ExpressionTreeNode right = stack.pop();
-					ExpressionTreeNode left = stack.pop();
-					BinaryOperator previousOperator = operatorStack.pop();
-					BinaryOperatorNode node = new BinaryOperatorNode(left, right, previousOperator);
-					stack.push(node);
-					operatorStack.push(getOperator(c));
-
 				} else if (isPriorityOperator) {
-					sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
-					hasLetter = Condition.NOT_EVALUATED;
-					hasDigit = Condition.NOT_EVALUATED;
+					if (!isEmpty(sb)) {
+						sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
+						hasLetter = Condition.NOT_EVALUATED;
+						hasDigit = Condition.NOT_EVALUATED;
+					}
 					ExpressionTreeNode left = stack.pop();
 					BinaryOperator operator = getOperator(c);
 					BinaryOperatorNode node = new BinaryOperatorNode(left, null, operator);
 					stack.push(node);
 					missingRight = true;
+				} else if (isOpeningBracket(c)) {
+					if (!isEmpty(sb)) {
+						sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
+						hasLetter = Condition.NOT_EVALUATED;
+						hasDigit = Condition.NOT_EVALUATED;
+					}
+					operatorStack.push(getOperator(c));
+					openingBracketsInStack++;
+					if (missingRight) {
+						missingRightBracketNotClosed = true;
+					}
+				} else if (isClosingBracket(c)) {
+					BinaryOperator last = operatorStack.pop();
+					sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
+					hasLetter = Condition.NOT_EVALUATED;
+					hasDigit = Condition.NOT_EVALUATED;
+					while (last != BinaryOperator.BRACKET) {
+						ExpressionTreeNode right = stack.pop();
+						ExpressionTreeNode left = stack.pop();
+						BinaryOperatorNode tempNode = new BinaryOperatorNode(left, right, last);
+						stack.push(tempNode);
+						try {
+							last = operatorStack.pop();
+						} catch (EmptyStackException e) {
+							break;
+						}
+					}
+					if (missingRightBracketNotClosed) {
+						missingRight = true;
+						missingRightBracketNotClosed = false;
+						ExpressionTreeNode lastNode = stack.pop();
+						ExpressionTreeNode previous = stack.pop();
+						((BinaryOperatorNode) previous).setRigth(lastNode);
+						stack.push(previous);
+					}
+					openingBracketsInStack--;
 				}
-			} else {
+			} else {// digit or number
 				sb.append(c);
 				startingOperatorConsumed = true;
 			}
@@ -108,14 +165,14 @@ public final class ExpressionTreeFactory {
 				stack.push(node);
 			}
 		}
-
 		return stack.pop();
+
 	}
 
 	private static StringBuilder putReferenceOrTreeNodeInStack(Stack<ExpressionTreeNode> stack, StringBuilder sb, Condition hasLetter,
 			Condition hasDigit) {
 		if (hasLetter.equals(Condition.TRUE) && hasDigit.equals(Condition.TRUE)) {
-			stack.push(new ReferenceNode(sb.toString()));
+			stack.push(new ReferenceNode(new Cell(sb.toString())));
 		} else if (hasLetter.equals(Condition.FALSE) && hasDigit.equals(Condition.TRUE)) {
 			stack.push(new ValueNode(Double.parseDouble(sb.toString())));
 		}
@@ -124,18 +181,19 @@ public final class ExpressionTreeFactory {
 	}
 
 	private static boolean isOperator(char c) {
-		if ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '(') || (c == ')')) {
-			return true;
-		}
-		return false;
+		return (c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '(') || (c == ')');
+	}
+
+	private static boolean isAritmeticOperator(char c) {
+		return (c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^');
+	}
+
+	private static boolean isPlusOrMinus(char c) {
+		return (c == '+') || (c == '-');
 	}
 
 	private static boolean isPriorityOperator(char c) {
 		return (c == '*') || (c == '/') || (c == '^');
-	}
-
-	private static boolean isMinus(char c) {
-		return (c == '-');
 	}
 
 	private static boolean isOpeningBracket(char c) {
@@ -170,13 +228,6 @@ public final class ExpressionTreeFactory {
 		return Condition.FALSE;
 	}
 
-	private static boolean isNoNode(char c) {
-		if ((c == '+') || (c == '-') || (c == '*') || (c == '/') || (c == '^') || (c == '(') || (c == ')')) {
-			return true;
-		}
-		return false;
-	}
-
 	private static Condition hasLetter(char c, Condition condition) {
 		if (condition.equals(Condition.TRUE)) {
 			return Condition.TRUE;
@@ -205,79 +256,154 @@ public final class ExpressionTreeFactory {
 		}
 	}
 
-	private static void addIfNotEmpty(List<String> list, String value) {
-		if (!value.equals("")) {
-			list.add(value);
+	private static boolean isEmpty(StringBuilder sb) {
+		return sb.toString().equals("");
+	}
+
+	private static String removeSigns(String expression) {
+		while (hasTwoNeighborPlusMinusSigns(expression)) {
+			expression = removeSign(expression);
+		}
+
+		StringBuilder sb = new StringBuilder(expression);
+		while (sb.charAt(0) == '+') {
+			sb.deleteCharAt(0);
+		}
+		return sb.toString();
+
+	}
+
+	private static String removeSign(String expression) {
+		StringBuilder sb = new StringBuilder();
+		char[] array = expression.toCharArray();
+		for (int i = 0; i < array.length; i++) {
+			if ((i < (array.length - 1)) && isPlusOrMinus(array[i]) && isPlusOrMinus(array[i + 1])) {
+				char result = calculatePlusOrMinus(array[i], array[i + 1]);
+				sb.append(result);
+				if ((i + 2) < array.length) {
+					for (int j = i + 2; j < array.length; j++) {
+						sb.append(array[j]);
+					}
+				}
+				break;
+			}
+			sb.append(array[i]);
+		}
+		return sb.toString();
+	}
+
+	private static char calculatePlusOrMinus(char first, char second) {
+		if (first == '+') {
+			if (second == '-') {
+				return '-';
+			} else {
+				return '+';
+			}
+		} else {
+			if (second == '-') {
+				return '+';
+			} else {
+				return '-';
+			}
 		}
 	}
 
-	public static List<String> removeOuterBrackets(String expression) {
-		StringBuilder beforeBrackets = new StringBuilder("");
-		StringBuilder afterBrackets = new StringBuilder("");
-		StringBuilder newExpression = new StringBuilder("");
-		int bracketsFound = 0;
-		int depth = countBrackesDepth(expression);
+	private static boolean hasTwoNeighborPlusMinusSigns(String expression) {
 		char[] array = expression.toCharArray();
-		boolean closingFound = false;
-		boolean openingFound = false;
-		boolean maxDepthFound = true;
+		boolean previous = false;
 		for (char c : array) {
-			if (closingFound) {
-				afterBrackets.append(c);
-			}
-			if (isClosingBracket(c)) {
-				bracketsFound--;
-				if (bracketsFound == 0) {
-					closingFound = true;
+			if (previous) {
+				if (isPlusOrMinus(c)) {
+					return true;
+				} else {
+					previous = false;
 				}
-				maxDepthFound = false;
-			}
-			if (openingFound && !closingFound) {
-				newExpression.append(c);
-			}
-			if (isOpeningBracket(c)) {
-				bracketsFound++;
-				openingFound = true;
-				if (bracketsFound == depth) {
-					maxDepthFound = true;
-				}
-			}
-			if ((bracketsFound == 0) && !openingFound) {
-				beforeBrackets.append(c);
-			}
-		}
-		List<String> list = new ArrayList<>();
-		addIfNotEmpty(list, beforeBrackets.toString());
-		addIfNotEmpty(list, newExpression.toString());
-		addIfNotEmpty(list, afterBrackets.toString());
-		return list;
-	}
-
-	private static boolean hasBrackets(String expression) {
-		char[] array = expression.toCharArray();
-		for (char c : array) {
-			if (isBracket(c)) {
-				return true;
+			} else {
+				previous = isPlusOrMinus(c);
 			}
 		}
 		return false;
 	}
 
-	private static int countBrackesDepth(String expression) {
-		int maxBracketDepth = 0;
-		int currentBracketDept = 0;
+	public static String removeEmptyCheckBracketsAndStartEnd(String expression) {
 		char[] array = expression.toCharArray();
+		StringBuilder sb = new StringBuilder();
+		int numberOfBrackets = 0;
 		for (char c : array) {
-			if (isOpeningBracket(c)) {
-				currentBracketDept++;
+			if (numberOfBrackets < 0) {
+				throw new IllegalArgumentException("Invalid expression");
+			}
+			if (c == ' ') {
+				continue;
+			} else {
+				sb.append(c);
 			}
 			if (isClosingBracket(c)) {
-				if (maxBracketDepth < currentBracketDept) {
-					maxBracketDepth = currentBracketDept;
-				}
-				currentBracketDept--;
+				numberOfBrackets--;
+			}
+			if (isOpeningBracket(c)) {
+				numberOfBrackets++;
 			}
 		}
-		return maxBracketDepth;
+		if ((numberOfBrackets != 0) || isPriorityOperator(sb.charAt(0)) || isAritmeticOperator(sb.charAt(sb.length() - 1))) {
+			throw new IllegalArgumentException("Invalid expression");
+		}
+		return sb.toString();
+	}
+
+	static String fixToPower(String expression) {
+		StringBuilder sb = new StringBuilder();
+		String[] powerArray = expression.split("\\^");
+		if (powerArray.length == 1) {
+			return powerArray[0];
+		} else if (powerArray.length == 2) {
+			sb.append(putOpeningBracket(powerArray[0]));
+			sb.append("^");
+			sb.append(putClosingBracket(powerArray[1]));
+			return sb.toString();
+		} else {
+			sb.append(putOpeningBracket(powerArray[0]));
+			for (int i = 1; i < (powerArray.length - 1); i++) {
+				sb.append("^");
+				sb.append(putClosingBracket(putOpeningBracket(powerArray[i])));
+			}
+			sb.append("^");
+			sb.append(putClosingBracket(powerArray[powerArray.length - 1]));
+			return sb.toString();
+		}
+	}
+
+	private static String putOpeningBracket(String word) {
+		char[] array = word.toCharArray();
+		StringBuilder sb = new StringBuilder();
+		boolean bracketPut = false;
+		for (int i = array.length - 1; i >= 0; i--) {
+			if (isAritmeticOperator(array[i]) && !bracketPut) {
+				sb.append('(');
+				bracketPut = true;
+			}
+			sb.append(array[i]);
+		}
+		if (!bracketPut) {
+			sb.append('(');
+		}
+		return sb.reverse().toString();
+	}
+
+	private static String putClosingBracket(String word) {
+		char[] array = word.toCharArray();
+		StringBuilder sb = new StringBuilder();
+		boolean bracketPut = false;
+		for (char c : array) {
+			if (isAritmeticOperator(c) && !bracketPut) {
+				sb.append(')');
+				bracketPut = true;
+			}
+			sb.append(c);
+		}
+		if (!bracketPut) {
+			sb.append(')');
+		}
+		return sb.toString();
 	}
 }

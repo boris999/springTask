@@ -1,5 +1,9 @@
 package com.model.expression;
 
+import java.util.Set;
+
+import com.model.table.Cell;
+
 public class ValueNode implements ExpressionTreeNode {
 	private double value;
 
@@ -7,6 +11,7 @@ public class ValueNode implements ExpressionTreeNode {
 		this.value = value;
 	}
 
+	@Override
 	public double getValue() {
 		return this.value;
 	}
@@ -51,6 +56,11 @@ public class ValueNode implements ExpressionTreeNode {
 	@Override
 	public String toString() {
 		return String.valueOf(this.value);
+	}
+
+	@Override
+	public Set<Cell> getDependingCells() {
+		return null;
 	}
 
 }

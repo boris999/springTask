@@ -1,15 +1,16 @@
 package com.model.table;
 
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.model.expression.ExpressionTreeNode;
+import com.serialize.expression.ExpressionTreeFactory;
 
 public class Cell {
 
 	private final String name;
 	private double value;
-	private String cellExpression;
 	private int row;
 	private String column;
 	ExpressionTreeNode nodeTree;
@@ -20,19 +21,17 @@ public class Cell {
 	}
 
 	Cell(String cellName, String expression) {
-		// TODO extracting cell row index and column name should be done outside
 		this.name = cellName;
-		Matcher matcher = cellNamePattern.matcher(this.name);
-		if (matcher.matches()) {
-			this.column = matcher.group(1);
-			this.row = Integer.parseInt(matcher.group(2));
-		}
-		this.cellExpression = expression;
+		this.nodeTree = ExpressionTreeFactory.parseExpression(expression);
 	}
 
-	Cell(String cellName) {
+	public Cell(String cellName) {
 		this.name = cellName;
 
+	}
+
+	public Set<Cell> getDependingRefferenceNodes() {
+		return this.nodeTree.getDependingCells();
 	}
 
 	public String getName() {
@@ -43,15 +42,13 @@ public class Cell {
 		return this.value;
 	}
 
-	public String getExpression() {
-		return this.cellExpression;
-	}
-
 	public int getRow() {
+		this.initializeRowAndColumn();
 		return this.row;
 	}
 
 	public String getColumn() {
+		this.initializeRowAndColumn();
 		return this.column;
 	}
 
@@ -83,6 +80,14 @@ public class Cell {
 			return false;
 		}
 		return true;
+	}
+
+	private void initializeRowAndColumn() {
+		Matcher matcher = cellNamePattern.matcher(this.name);
+		if (matcher.matches()) {
+			this.column = matcher.group(1);
+			this.row = Integer.parseInt(matcher.group(2));
+		}
 	}
 
 }
