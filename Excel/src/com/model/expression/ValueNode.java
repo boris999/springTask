@@ -1,5 +1,6 @@
 package com.model.expression;
 
+import java.util.Map;
 import java.util.Set;
 
 import com.model.table.Cell;
@@ -12,7 +13,7 @@ public class ValueNode implements ExpressionTreeNode {
 	}
 
 	@Override
-	public double getValue() {
+	public Double getValue(Map<String, Cell> map) {
 		return this.value;
 	}
 

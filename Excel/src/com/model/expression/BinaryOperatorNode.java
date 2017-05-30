@@ -1,12 +1,12 @@
 package com.model.expression;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import com.model.table.Cell;
 
 public class BinaryOperatorNode implements ExpressionTreeNode {
-	// TODO visibility
 	private ExpressionTreeNode left;
 	private ExpressionTreeNode right;
 	private BinaryOperator action;
@@ -114,9 +114,24 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 	}
 
 	@Override
-	public double getValue() {
-		// TODO Auto-generated method stub
-		return 0;
+	public Double getValue(Map<String, Cell> map) {
+		Double leftValue = this.left.getValue(map);
+		Double rightValue = this.right.getValue(map);
+		if ((leftValue == null) || (rightValue == null)) {
+			return null;
+		}
+		switch (this.action) {
+		case PLUS:
+			return leftValue + rightValue;
+		case MINUS:
+			return leftValue - rightValue;
+		case MULTIPLY:
+			return leftValue * rightValue;
+		case DIVIDE:
+			return leftValue / rightValue;
+		default:
+			return Math.pow(leftValue, rightValue);
+		}
 	}
 
 	@Override

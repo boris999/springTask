@@ -325,7 +325,7 @@ public final class ExpressionTreeFactory {
 		return false;
 	}
 
-	public static String removeEmptyCheckBracketsAndStartEnd(String expression) {
+	private static String removeEmptyCheckBracketsAndStartEnd(String expression) {
 		char[] array = expression.toCharArray();
 		StringBuilder sb = new StringBuilder();
 		int numberOfBrackets = 0;

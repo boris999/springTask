@@ -12,12 +12,6 @@ import com.model.table.Cell;
 
 public class ExpressionTreeFactoryTest {
 
-	// @Test
-	// public void dummyTest() {
-	// String test = ExpressionTreeFactory.fixToPower("A4*4+A2/3^3^2-6*2/5^3");
-	// this.checkParsed(new ValueNode(5), test);
-	// }
-
 	@Test
 	public void testValue() {
 		this.checkParsed(new ValueNode(5), "5");
@@ -85,7 +79,6 @@ public class ExpressionTreeFactoryTest {
 	}
 
 	@Test
-	// TODO wrong operator precedence
 	public void testMoreAndMorePriority() {
 		BinaryOperatorNode left = new BinaryOperatorNode(new ValueNode(10), new ReferenceNode(new Cell("A6")), BinaryOperator.MULTIPLY);
 		BinaryOperatorNode rightRight = new BinaryOperatorNode(new ReferenceNode(new Cell("B3")), new ValueNode(2), BinaryOperator.POWER);
@@ -172,7 +165,6 @@ public class ExpressionTreeFactoryTest {
 		this.checkParsed(new BinaryOperatorNode(third, fourth, BinaryOperator.MINUS), "((((B3-B1)*A4)/B9)-2)");
 	}
 
-	// TODO operator precedence
 	@Test
 	public void testStrange() {// ((-A5)/7^A1+(4*B4))/2")
 		BinaryOperatorNode first = new BinaryOperatorNode(new ValueNode(0), new ReferenceNode(new Cell("A5")), BinaryOperator.MINUS);
