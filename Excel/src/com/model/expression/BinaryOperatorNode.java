@@ -1,35 +1,32 @@
 package com.model.expression;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import com.model.table.Cell;
-
-public class BinaryOperatorNode implements ExpressionTreeNode {
-	private ExpressionTreeNode left;
-	private ExpressionTreeNode right;
+public class BinaryOperatorNode<T> implements ExpressionTreeNode<T> {
+	private ExpressionTreeNode<T> left;
+	private ExpressionTreeNode<T> right;
 	private BinaryOperator action;
 
-	public BinaryOperatorNode(ExpressionTreeNode left, ExpressionTreeNode right, BinaryOperator action) {
+	public BinaryOperatorNode(ExpressionTreeNode<T> left, ExpressionTreeNode<T> right, BinaryOperator action) {
 		this.left = left;
 		this.right = right;
 		this.action = action;
 	}
 
-	public ExpressionTreeNode getLeft() {
+	public ExpressionTreeNode<T> getLeft() {
 		return this.left;
 	}
 
-	public void setLeft(ExpressionTreeNode left) {
+	public void setLeft(ExpressionTreeNode<T> left) {
 		this.left = left;
 	}
 
-	public ExpressionTreeNode getRight() {
+	public ExpressionTreeNode<T> getRight() {
 		return this.right;
 	}
 
-	public void setRigth(ExpressionTreeNode rigth) {
+	public void setRigth(ExpressionTreeNode<T> rigth) {
 		this.right = rigth;
 	}
 
@@ -39,6 +36,27 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 
 	public void setAction(BinaryOperator action) {
 		this.action = action;
+	}
+
+	@Override
+	public Double getValue(ReferenceContext<T> context) {
+		Double leftValue = this.left.getValue(context);
+		Double rightValue = this.right.getValue(context);
+		if ((leftValue == null) || (rightValue == null)) {
+			return null;
+		}
+		switch (this.action) {
+		case PLUS:
+			return leftValue + rightValue;
+		case MINUS:
+			return leftValue - rightValue;
+		case MULTIPLY:
+			return leftValue * rightValue;
+		case DIVIDE:
+			return leftValue / rightValue;
+		default:
+			return Math.pow(leftValue, rightValue);
+		}
 	}
 
 	@Override
@@ -62,7 +80,7 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		BinaryOperatorNode other = (BinaryOperatorNode) obj;
+		BinaryOperatorNode<?> other = (BinaryOperatorNode<?>) obj;
 		if (this.action != other.action) {
 			return false;
 		}
@@ -81,11 +99,6 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public boolean hasRight() {
-		return this.right == null ? false : true;
 	}
 
 	@Override
@@ -114,31 +127,10 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 	}
 
 	@Override
-	public Double getValue(Map<String, Cell> map) {
-		Double leftValue = this.left.getValue(map);
-		Double rightValue = this.right.getValue(map);
-		if ((leftValue == null) || (rightValue == null)) {
-			return null;
-		}
-		switch (this.action) {
-		case PLUS:
-			return leftValue + rightValue;
-		case MINUS:
-			return leftValue - rightValue;
-		case MULTIPLY:
-			return leftValue * rightValue;
-		case DIVIDE:
-			return leftValue / rightValue;
-		default:
-			return Math.pow(leftValue, rightValue);
-		}
-	}
-
-	@Override
-	public Set<Cell> getDependingCells() {
-		Set<Cell> tempSet = new HashSet<>();
-		Set<Cell> leftSet = this.left.getDependingCells();
-		Set<Cell> rightSet = this.right.getDependingCells();
+	public Set<T> getTransitiveReferences(ReferenceContext<T> context) {
+		Set<T> tempSet = new HashSet<>();
+		Set<T> leftSet = this.left.getTransitiveReferences(context);
+		Set<T> rightSet = this.right.getTransitiveReferences(context);
 		if (leftSet != null) {
 			tempSet.addAll(leftSet);
 		}
@@ -148,4 +140,10 @@ public class BinaryOperatorNode implements ExpressionTreeNode {
 		return tempSet;
 	}
 
+	public boolean hasRight() {
+		if (this.right == null) {
+			return false;
+		}
+		return true;
+	}
 }

@@ -1,31 +1,20 @@
 package com.model.expression;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
-import com.model.table.Cell;
+public class ReferenceNode<T> implements ExpressionTreeNode<T> {
+	private final T reference;
 
-public class ReferenceNode implements ExpressionTreeNode {
-	private Cell cell;
-
-	public ReferenceNode(Cell cell) {
-		this.cell = cell;
-	}
-
-	public Cell getCell() {
-		return this.cell;
-	}
-
-	public void setCell(Cell cell) {
-		this.cell = cell;
+	public ReferenceNode(T reference) {
+		this.reference = reference;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = (prime * result) + ((this.cell == null) ? 0 : this.cell.hashCode());
+		result = (prime * result) + ((this.reference == null) ? 0 : this.reference.hashCode());
 		return result;
 	}
 
@@ -40,37 +29,27 @@ public class ReferenceNode implements ExpressionTreeNode {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		ReferenceNode other = (ReferenceNode) obj;
-		if (this.cell == null) {
-			if (other.cell != null) {
+		ReferenceNode<?> other = (ReferenceNode<?>) obj;
+		if (this.reference == null) {
+			if (other.reference != null) {
 				return false;
 			}
-		} else if (!this.cell.equals(other.cell)) {
+		} else if (!this.reference.equals(other.reference)) {
 			return false;
 		}
 		return true;
 	}
 
 	@Override
-	public boolean hasRight() {
-		return false;
-	}
-
-	@Override
-	public String toString() {
-		return this.cell.getName();
-	}
-
-	@Override
-	public Double getValue(Map<String, Cell> map) {
-		return map.get(this.cell.getName()).getValue(map);
-	}
-
-	@Override
-	public Set<Cell> getDependingCells() {
-		Set<Cell> tempSet = new HashSet<>();
-		tempSet.add(this.cell);
+	public Set<T> getTransitiveReferences(ReferenceContext<T> context) {
+		Set<T> tempSet = new HashSet<>();
+		tempSet.add(this.reference);
 		return tempSet;
+	}
+
+	@Override
+	public Double getValue(ReferenceContext<T> context) {
+		return context.getValue(this.reference);
 	}
 
 }

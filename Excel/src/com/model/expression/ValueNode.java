@@ -1,20 +1,12 @@
 package com.model.expression;
 
-import java.util.Map;
 import java.util.Set;
 
-import com.model.table.Cell;
-
-public class ValueNode implements ExpressionTreeNode {
+public class ValueNode<T> implements ExpressionTreeNode<T> {
 	private double value;
 
 	public ValueNode(double value) {
 		this.value = value;
-	}
-
-	@Override
-	public Double getValue(Map<String, Cell> map) {
-		return this.value;
 	}
 
 	public void setValue(double value) {
@@ -42,16 +34,11 @@ public class ValueNode implements ExpressionTreeNode {
 		if (this.getClass() != obj.getClass()) {
 			return false;
 		}
-		ValueNode other = (ValueNode) obj;
+		ValueNode<?> other = (ValueNode<?>) obj;
 		if (Double.doubleToLongBits(this.value) != Double.doubleToLongBits(other.value)) {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public boolean hasRight() {
-		return false;
 	}
 
 	@Override
@@ -60,7 +47,12 @@ public class ValueNode implements ExpressionTreeNode {
 	}
 
 	@Override
-	public Set<Cell> getDependingCells() {
+	public Double getValue(ReferenceContext<T> context) {
+		return this.value;
+	}
+
+	@Override
+	public Set<T> getTransitiveReferences(ReferenceContext<T> context) {
 		return null;
 	}
 

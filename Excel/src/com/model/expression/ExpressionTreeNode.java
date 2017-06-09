@@ -1,14 +1,11 @@
 package com.model.expression;
 
-import java.util.Map;
 import java.util.Set;
 
-import com.model.table.Cell;
+public interface ExpressionTreeNode<T> {
 
-public interface ExpressionTreeNode {
-	public boolean hasRight();
+	public Double getValue(ReferenceContext<T> context);
 
-	public Set<Cell> getDependingCells();
+	public Set<T> getTransitiveReferences(ReferenceContext<T> context);
 
-	public Double getValue(Map<String, Cell> map);
 }

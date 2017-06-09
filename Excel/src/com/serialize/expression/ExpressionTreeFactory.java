@@ -9,19 +9,16 @@ import com.model.expression.Condition;
 import com.model.expression.ExpressionTreeNode;
 import com.model.expression.ReferenceNode;
 import com.model.expression.ValueNode;
-import com.model.table.Cell;
+import com.model.table.CellReference;
 
 public final class ExpressionTreeFactory {
-	// private static Pattern letterPattern = Pattern.compile("([\\w&&[^\\d_]])");
-	// private Pattern operatorPattern = Pattern.compile("[+-^*//]");
-	// private Pattern digitPattern = Pattern.compile("[0-9.]");
 
 	private ExpressionTreeFactory() {
 	}
 
-	public static ExpressionTreeNode parseExpression(String expression) {
+	public static ExpressionTreeNode<CellReference> parseExpression(String expression) {
 		expression = fixToPower(removeSigns(removeEmptyCheckBracketsAndStartEnd(expression)));
-		Stack<ExpressionTreeNode> stack = new Stack<>();
+		Stack<ExpressionTreeNode<CellReference>> stack = new Stack<>();
 		Stack<BinaryOperator> operatorStack = new Stack<>();
 		char[] array = expression.toCharArray();
 		StringBuilder sb = new StringBuilder("");
@@ -46,12 +43,12 @@ public final class ExpressionTreeFactory {
 				int operatorstackSize = operatorStack.size();
 				if (missingRight && !missingRightBracketNotClosed && !isOpeningBracket(c)) {// no right node
 					if (!isEmpty(sb)) {
-						ExpressionTreeNode previous = stack.pop();
+						ExpressionTreeNode<CellReference> previous = stack.pop();
 						sb = putReferenceOrTreeNodeInStack(stack, sb, hasLetter, hasDigit);
 						hasLetter = Condition.NOT_EVALUATED;
 						hasDigit = Condition.NOT_EVALUATED;
-						ExpressionTreeNode lastNode = stack.pop();
-						((BinaryOperatorNode) previous).setRigth(lastNode);
+						ExpressionTreeNode<CellReference> lastNode = stack.pop();
+						((BinaryOperatorNode<CellReference>) previous).setRigth(lastNode);
 						stack.push(previous);
 						if (!isClosingBracket(c)) {
 							operatorStack.push(getOperator(c));
@@ -61,9 +58,9 @@ public final class ExpressionTreeFactory {
 							hasLetter = Condition.NOT_EVALUATED;
 							hasDigit = Condition.NOT_EVALUATED;
 							while (last != BinaryOperator.BRACKET) {
-								ExpressionTreeNode right = stack.pop();
-								ExpressionTreeNode left = stack.pop();
-								BinaryOperatorNode tempNode = new BinaryOperatorNode(left, right, last);
+								ExpressionTreeNode<CellReference> right = stack.pop();
+								ExpressionTreeNode<CellReference> left = stack.pop();
+								BinaryOperatorNode<CellReference> tempNode = new BinaryOperatorNode<>(left, right, last);
 								stack.push(tempNode);
 								last = operatorStack.pop();
 							}
@@ -71,9 +68,9 @@ public final class ExpressionTreeFactory {
 						}
 						missingRight = false;
 					} else {
-						ExpressionTreeNode last = stack.pop();
-						ExpressionTreeNode beforeLast = stack.pop();
-						((BinaryOperatorNode) beforeLast).setRigth(last);
+						ExpressionTreeNode<CellReference> last = stack.pop();
+						ExpressionTreeNode<CellReference> beforeLast = stack.pop();
+						((BinaryOperatorNode<CellReference>) beforeLast).setRigth(last);
 						stack.push(beforeLast);
 						missingRight = false;
 						operatorStack.push(getOperator(c));
@@ -88,10 +85,10 @@ public final class ExpressionTreeFactory {
 					hasLetter = Condition.NOT_EVALUATED;
 					hasDigit = Condition.NOT_EVALUATED;
 					if (operatorStack.peek() != BinaryOperator.BRACKET) {
-						ExpressionTreeNode right = stack.pop();
-						ExpressionTreeNode left = stack.pop();
+						ExpressionTreeNode<CellReference> right = stack.pop();
+						ExpressionTreeNode<CellReference> left = stack.pop();
 						BinaryOperator previousOperator = operatorStack.pop();
-						BinaryOperatorNode node = new BinaryOperatorNode(left, right, previousOperator);
+						BinaryOperatorNode<CellReference> node = new BinaryOperatorNode<>(left, right, previousOperator);
 						stack.push(node);
 					}
 					operatorStack.push(getOperator(c));
@@ -101,9 +98,9 @@ public final class ExpressionTreeFactory {
 						hasLetter = Condition.NOT_EVALUATED;
 						hasDigit = Condition.NOT_EVALUATED;
 					}
-					ExpressionTreeNode left = stack.pop();
+					ExpressionTreeNode<CellReference> left = stack.pop();
 					BinaryOperator operator = getOperator(c);
-					BinaryOperatorNode node = new BinaryOperatorNode(left, null, operator);
+					BinaryOperatorNode<CellReference> node = new BinaryOperatorNode<>(left, null, operator);
 					stack.push(node);
 					missingRight = true;
 				} else if (isOpeningBracket(c)) {
@@ -123,9 +120,9 @@ public final class ExpressionTreeFactory {
 					hasLetter = Condition.NOT_EVALUATED;
 					hasDigit = Condition.NOT_EVALUATED;
 					while (last != BinaryOperator.BRACKET) {
-						ExpressionTreeNode right = stack.pop();
-						ExpressionTreeNode left = stack.pop();
-						BinaryOperatorNode tempNode = new BinaryOperatorNode(left, right, last);
+						ExpressionTreeNode<CellReference> right = stack.pop();
+						ExpressionTreeNode<CellReference> left = stack.pop();
+						BinaryOperatorNode<CellReference> tempNode = new BinaryOperatorNode<>(left, right, last);
 						stack.push(tempNode);
 						try {
 							last = operatorStack.pop();
@@ -136,9 +133,9 @@ public final class ExpressionTreeFactory {
 					if (missingRightBracketNotClosed) {
 						missingRight = true;
 						missingRightBracketNotClosed = false;
-						ExpressionTreeNode lastNode = stack.pop();
-						ExpressionTreeNode previous = stack.pop();
-						((BinaryOperatorNode) previous).setRigth(lastNode);
+						ExpressionTreeNode<CellReference> lastNode = stack.pop();
+						ExpressionTreeNode<CellReference> previous = stack.pop();
+						((BinaryOperatorNode<CellReference>) previous).setRigth(lastNode);
 						stack.push(previous);
 					}
 					openingBracketsInStack--;
@@ -154,14 +151,14 @@ public final class ExpressionTreeFactory {
 			hasDigit = Condition.NOT_EVALUATED;
 		}
 		while (stack.size() > 1) {
-			ExpressionTreeNode last = stack.pop();
-			ExpressionTreeNode beforelast = stack.pop();
-			if ((beforelast instanceof BinaryOperatorNode) && !beforelast.hasRight()) {
-				((BinaryOperatorNode) beforelast).setRigth(last);
+			ExpressionTreeNode<CellReference> last = stack.pop();
+			ExpressionTreeNode<CellReference> beforelast = stack.pop();
+			if ((beforelast instanceof BinaryOperatorNode) && (((BinaryOperatorNode<CellReference>) beforelast).getRight() == null)) {
+				((BinaryOperatorNode<CellReference>) beforelast).setRigth(last);
 				stack.push(beforelast);
 			} else {
 				BinaryOperator lastOperator = operatorStack.pop();
-				BinaryOperatorNode node = new BinaryOperatorNode(beforelast, last, lastOperator);
+				BinaryOperatorNode<CellReference> node = new BinaryOperatorNode<>(beforelast, last, lastOperator);
 				stack.push(node);
 			}
 		}
@@ -169,12 +166,12 @@ public final class ExpressionTreeFactory {
 
 	}
 
-	private static StringBuilder putReferenceOrTreeNodeInStack(Stack<ExpressionTreeNode> stack, StringBuilder sb, Condition hasLetter,
+	private static StringBuilder putReferenceOrTreeNodeInStack(Stack<ExpressionTreeNode<CellReference>> stack, StringBuilder sb, Condition hasLetter,
 			Condition hasDigit) {
 		if (hasLetter.equals(Condition.TRUE) && hasDigit.equals(Condition.TRUE)) {
-			stack.push(new ReferenceNode(new Cell(sb.toString())));
+			stack.push(new ReferenceNode<>(CellNameTransformer.convertCellNameToIndex(sb.toString())));
 		} else if (hasLetter.equals(Condition.FALSE) && hasDigit.equals(Condition.TRUE)) {
-			stack.push(new ValueNode(Double.parseDouble(sb.toString())));
+			stack.push(new ValueNode<CellReference>(Double.parseDouble(sb.toString())));
 		}
 		return new StringBuilder("");
 
@@ -351,7 +348,7 @@ public final class ExpressionTreeFactory {
 		return sb.toString();
 	}
 
-	static String fixToPower(String expression) {
+	private static String fixToPower(String expression) {
 		StringBuilder sb = new StringBuilder();
 		String[] powerArray = expression.split("\\^");
 		if (powerArray.length == 1) {
@@ -365,7 +362,12 @@ public final class ExpressionTreeFactory {
 			sb.append(putOpeningBracket(powerArray[0]));
 			for (int i = 1; i < (powerArray.length - 1); i++) {
 				sb.append("^");
-				sb.append(putClosingBracket(putOpeningBracket(powerArray[i])));
+				String current = powerArray[i];
+				if (containsArithmeticSign(current)) {
+					current = putOpeningBracket(powerArray[i]);
+					current = putClosingBracket(current);
+				}
+				sb.append(current);
 			}
 			sb.append("^");
 			sb.append(putClosingBracket(powerArray[powerArray.length - 1]));
@@ -405,5 +407,9 @@ public final class ExpressionTreeFactory {
 			sb.append(')');
 		}
 		return sb.toString();
+	}
+
+	private static boolean containsArithmeticSign(String expression) {
+		return expression.contains("+") || expression.contains("-") || expression.contains("*") || expression.contains("/");
 	}
 }
