@@ -9,9 +9,9 @@ public interface ReferenceContext<T> {
 
 	Double getValue(T reference);
 
-	public Cell getCell(CellReference reference);
+	Cell getCell(CellReference reference);
 
-	public Cell getCell(int columnIndex, int rowIndex);
+	Cell getCell(int columnIndex, int rowIndex);
 
-	public Set<Cell> getCells(Set<CellReference> set);
+	Set<Cell> getCells(Set<Cell> set);
 }

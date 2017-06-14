@@ -52,4 +52,9 @@ public class ReferenceNode<T> implements ExpressionTreeNode<T> {
 		return context.getValue(this.reference);
 	}
 
+	@Override
+	public String toString() {
+		return this.reference.toString();
+	}
+
 }

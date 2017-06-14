@@ -1,5 +1,6 @@
 package com.model.expression;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class ValueNode<T> implements ExpressionTreeNode<T> {
@@ -53,7 +54,7 @@ public class ValueNode<T> implements ExpressionTreeNode<T> {
 
 	@Override
 	public Set<T> getTransitiveReferences(ReferenceContext<T> context) {
-		return null;
+		return new HashSet<T>();
 	}
 
 }

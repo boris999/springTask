@@ -22,8 +22,11 @@ public class RunTable {
 			System.out.println("Enter Value");
 			String s = br.readLine();
 			try {
-				cip.addCell(s, table);
+				String expressionToPrint = cip.addCell(s, table);
 				tp.printTable(table, new PrintWriter(System.out));
+				if (expressionToPrint != null) {
+					System.out.println(expressionToPrint);
+				}
 			} catch (IllegalArgumentException e) {
 				System.out.println(e.getMessage());
 			} catch (ArrayIndexOutOfBoundsException ex) {

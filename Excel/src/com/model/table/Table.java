@@ -39,26 +39,17 @@ public class Table implements ReferenceContext<CellReference> {
 
 	public void setExpression(CellReference cellReference, ExpressionTreeNode<CellReference> expression) {
 		Cell cell = this.checkForCircularReference(cellReference, expression);
-
 		// remove old links
-		this.clearCellLinks(cellReference);
-
 		cell.setNodeTree(expression, this);
+		cell.calculateValue(this);
+		this.clearCellLinks(cellReference);
 		// set new links
 		Set<CellReference> currentCellDependsOn = cell.getExpression().getTransitiveReferences(this);
 		for (CellReference s : currentCellDependsOn) {
 			Cell currentCellDependsOnCurrent = this.getCell(s);
-			currentCellDependsOnCurrent.getObsevers().add(cell.getCellReference());
-			cell.getCellDependsOn().add(currentCellDependsOnCurrent.getCellReference());
+			currentCellDependsOnCurrent.getObsevers().add(cell);
+			cell.getCellDependsOn().add(currentCellDependsOnCurrent);
 		}
-		this.notifyOtherCellsAboutChangeInThisCell(cellReference);
-	}
-
-	public void setValue(CellReference cellReference, Double value) {
-		Cell currentCell = this.getCell(cellReference);
-		currentCell.setValue(value, this);
-		this.clearCellLinks(cellReference);
-		this.notifyOtherCellsAboutChangeInThisCell(cellReference);
 	}
 
 	@Override
@@ -72,10 +63,10 @@ public class Table implements ReferenceContext<CellReference> {
 	}
 
 	@Override
-	public Set<Cell> getCells(Set<CellReference> set) {
+	public Set<Cell> getCells(Set<Cell> set) {
 		Set<Cell> cellSet = new HashSet<>();
-		for (CellReference reference : set) {
-			cellSet.add(this.getCell(reference));
+		for (Cell cell : set) {
+			cellSet.add(this.getCell(cell.getCellReference()));
 		}
 		return cellSet;
 
@@ -83,7 +74,7 @@ public class Table implements ReferenceContext<CellReference> {
 
 	private Cell checkForCircularReference(CellReference cellReference, ExpressionTreeNode<CellReference> expression) {
 		Cell cellToAdd = this.getCell(cellReference);
-		Set<CellReference> copyOfObservers = new HashSet<>(cellToAdd.getObsevers());
+		Set<CellReference> copyOfObservers = new HashSet<>(cellToAdd.getObseverReferences());
 		copyOfObservers.retainAll(expression.getTransitiveReferences(this));
 		if (!copyOfObservers.isEmpty()) {
 			throw new IllegalArgumentException("Circylar reference!");
@@ -93,16 +84,10 @@ public class Table implements ReferenceContext<CellReference> {
 
 	private void clearCellLinks(CellReference cellReference) {
 		Cell currentCell = this.getCell(cellReference);
-		for (CellReference c : currentCell.getDependingRefferenceNodes(this)) {
+		for (CellReference c : currentCell.getDependanciesReferences(this)) {
 			this.getCell(c).getObsevers().remove(currentCell);
 		}
 		currentCell.getCellDependsOn().clear();
-	}
-
-	private void notifyOtherCellsAboutChangeInThisCell(CellReference cellReference) {
-		for (CellReference currentReference : this.getCell(cellReference).getObsevers()) {
-			this.getCell(currentReference).calculateValue(this);
-		}
 	}
 
 }

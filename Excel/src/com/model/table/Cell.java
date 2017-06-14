@@ -2,6 +2,7 @@ package com.model.table;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.model.expression.ExpressionTreeNode;
 import com.model.expression.ReferenceContext;
@@ -11,14 +12,14 @@ public class Cell {
 	private final CellReference cellReference;
 	private Double cachedValue;
 	private ExpressionTreeNode<CellReference> expression;
-	private Set<CellReference> obsevers = new HashSet<>();
-	private Set<CellReference> dependencies = new HashSet<>();
+	private Set<Cell> obsevers = new HashSet<>();
+	private Set<Cell> dependencies = new HashSet<>();
 
 	Cell(CellReference cellReference) {
 		this.cellReference = cellReference;
 	}
 
-	public Set<CellReference> getDependingRefferenceNodes(ReferenceContext<CellReference> context) {
+	public Set<CellReference> getDependanciesReferences(ReferenceContext<CellReference> context) {
 		if (this.expression != null) {
 			return this.expression.getTransitiveReferences(context);
 		}
@@ -36,11 +37,16 @@ public class Cell {
 		return this.cachedValue;
 	}
 
-	public Set<CellReference> getObsevers() {
+	public Set<Cell> getObsevers() {
 		return this.obsevers;
 	}
 
-	public Set<CellReference> getCellDependsOn() {
+	public Set<CellReference> getObseverReferences() {
+		return this.obsevers.stream().map(e -> e.getCellReference()).collect(Collectors.toSet());
+
+	}
+
+	public Set<Cell> getCellDependsOn() {
 		return this.dependencies;
 	}
 
@@ -61,8 +67,8 @@ public class Cell {
 	void calculateValue(ReferenceContext<CellReference> context) {
 		if (this.expression != null) {
 			this.cachedValue = this.expression.getValue(context);
-			for (CellReference observerReference : this.obsevers) {
-				context.getCell(observerReference).calculateValue(context);
+			for (Cell observer : this.obsevers) {
+				context.getCell(observer.getCellReference()).calculateValue(context);
 			}
 		}
 	}
