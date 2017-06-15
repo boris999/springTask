@@ -34,42 +34,41 @@ public class Table implements ReferenceContext<CellReference> {
 	@Override
 	public Double getValue(CellReference reference) {
 		Cell cell = this.getCell(reference);
-		return cell.getValue(this);
+		return cell.getCachedValue(this);
+	}
+
+	@Override
+	public Double getValue(int columnIndex, int rowIndex) {
+		return this.getCell(columnIndex, rowIndex).getCachedValue(this);
+
 	}
 
 	public void setExpression(CellReference cellReference, ExpressionTreeNode<CellReference> expression) {
 		Cell cell = this.checkForCircularReference(cellReference, expression);
 		// remove old links
-		cell.setNodeTree(expression, this);
+		cell.setExpression(expression, this);
 		cell.calculateValue(this);
 		this.clearCellLinks(cellReference);
 		// set new links
 		Set<CellReference> currentCellDependsOn = cell.getExpression().getTransitiveReferences(this);
 		for (CellReference s : currentCellDependsOn) {
 			Cell currentCellDependsOnCurrent = this.getCell(s);
-			currentCellDependsOnCurrent.getObsevers().add(cell);
-			cell.getCellDependsOn().add(currentCellDependsOnCurrent);
+			currentCellDependsOnCurrent.addObserver(cell);
+			cell.addDependancy(currentCellDependsOnCurrent);
 		}
 	}
 
-	@Override
-	public Cell getCell(CellReference reference) {
-		return this.cells[reference.getColumnIndex()][reference.getRowIndex()];
+	public ExpressionTreeNode<CellReference> getExpression(CellReference reference) {
+		return this.getCell(reference).getExpression();
+
 	}
 
-	@Override
-	public Cell getCell(int columnIndex, int rowIndex) {
+	private Cell getCell(CellReference reference) {
+		return this.getCell(reference.getColumnIndex(), reference.getRowIndex());
+	}
+
+	private Cell getCell(int columnIndex, int rowIndex) {
 		return this.cells[columnIndex][rowIndex];
-	}
-
-	@Override
-	public Set<Cell> getCells(Set<Cell> set) {
-		Set<Cell> cellSet = new HashSet<>();
-		for (Cell cell : set) {
-			cellSet.add(this.getCell(cell.getCellReference()));
-		}
-		return cellSet;
-
 	}
 
 	private Cell checkForCircularReference(CellReference cellReference, ExpressionTreeNode<CellReference> expression) {
@@ -85,9 +84,9 @@ public class Table implements ReferenceContext<CellReference> {
 	private void clearCellLinks(CellReference cellReference) {
 		Cell currentCell = this.getCell(cellReference);
 		for (CellReference c : currentCell.getDependanciesReferences(this)) {
-			this.getCell(c).getObsevers().remove(currentCell);
+			this.getCell(c).removeObserver(currentCell);
 		}
-		currentCell.getCellDependsOn().clear();
+		currentCell.clearDependancies();
 	}
 
 }

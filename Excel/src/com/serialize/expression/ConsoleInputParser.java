@@ -1,7 +1,6 @@
 package com.serialize.expression;
 
 import com.model.expression.ExpressionTreeNode;
-import com.model.table.Cell;
 import com.model.table.CellReference;
 import com.model.table.Table;
 
@@ -11,9 +10,8 @@ public class ConsoleInputParser {
 		String[] array = expression.split("=");
 		String cellName = array[0].trim().toUpperCase();
 		CellReference reference = CellNameTransformer.convertCellNameToIndex(cellName);
-		Cell currentCell = table.getCell(reference);
 		if ((array.length == 1)) {
-			return cellName + "=" + currentCell.getExpression();
+			return cellName + "=" + table.getExpression(reference);
 		}
 		if ((array.length != 2)) {
 			throw new IllegalArgumentException("Enter valid argument!");

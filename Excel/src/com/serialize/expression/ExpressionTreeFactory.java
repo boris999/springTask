@@ -17,7 +17,7 @@ public final class ExpressionTreeFactory {
 	}
 
 	public static ExpressionTreeNode<CellReference> parseExpression(String expression) {
-		expression = fixToPower(removeSigns(removeEmptyCheckBracketsAndStartEnd(expression)));
+		expression = prioritizeToPower(removeSigns(removeEmptyCheckBracketsAndStartEnd(expression)));
 		Stack<ExpressionTreeNode<CellReference>> stack = new Stack<>();
 		Stack<BinaryOperator> operatorStack = new Stack<>();
 		char[] array = expression.toCharArray();
@@ -348,7 +348,7 @@ public final class ExpressionTreeFactory {
 		return sb.toString();
 	}
 
-	private static String fixToPower(String expression) {
+	private static String prioritizeToPower(String expression) {
 		StringBuilder sb = new StringBuilder();
 		String[] powerArray = expression.split("\\^");
 		if (powerArray.length == 1) {

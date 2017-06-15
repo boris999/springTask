@@ -3,7 +3,6 @@ package com.writer;
 import java.io.PrintWriter;
 import java.util.stream.IntStream;
 
-import com.model.table.Cell;
 import com.model.table.Table;
 import com.serialize.expression.CellNameTransformer;
 
@@ -53,7 +52,8 @@ public class TablePrinter {
 		writer.print(this.getFormatedRowNumber(rowNumber + 1));
 		writer.print("|");
 		for (int i = 0; i < table.getColumnCount(); i++) {
-			writer.print(this.getFormatedString(this.printCell(table.getCell(i, rowNumber), table), maxCellWidth) + "|");
+			Double value = table.getValue(i, rowNumber);
+			writer.print(this.getFormatedString(this.printValue(value, table), maxCellWidth) + "|");
 		}
 	}
 
@@ -85,12 +85,12 @@ public class TablePrinter {
 		Double maxValue = 0.0;
 		for (int row = 0; row < table.getRowCount(); row++) {
 			for (int column = 0; column < table.getColumnCount(); column++) {
-				Cell currentCell = table.getCell(column, row);
-				if ((currentCell == null) || (currentCell.getValue(table) == null)) {
+				Double value = table.getValue(column, row);
+				if (value == null) {
 					continue;
 				}
-				Double currentCellValue = currentCell.getValue(table) >= 0 ? currentCell.getValue(table)
-						: -currentCell.getValue(table);
+				Double currentCellValue = value >= 0 ? value
+						: -value;
 				if (currentCellValue > maxValue) {
 					maxValue = currentCellValue;
 				}
@@ -99,9 +99,9 @@ public class TablePrinter {
 		return String.format("%.2f", maxValue).length();
 	}
 
-	private String printCell(Cell cell, Table table) {
-		if ((cell != null) && (cell.getValue(table) != null)) {
-			return String.format("%.2f", cell.getValue(table));
+	private String printValue(Double value, Table table) {
+		if (value != null) {
+			return String.format("%.2f", value);
 		} else {
 			return "";
 		}

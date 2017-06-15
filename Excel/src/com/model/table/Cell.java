@@ -26,19 +26,16 @@ public class Cell {
 		return new HashSet<>();
 	}
 
-	public Double getValue(ReferenceContext<CellReference> context) {
-		if (this.cachedValue == null) {
-			if (this.expression == null) {
-				return null;
-			} else {
-				this.calculateValue(context);
-			}
-		}
+	public Double getCachedValue(ReferenceContext<CellReference> context) {
 		return this.cachedValue;
 	}
 
-	public Set<Cell> getObsevers() {
-		return this.obsevers;
+	public void addObserver(Cell observer) {
+		this.obsevers.add(observer);
+	}
+
+	public void removeObserver(Cell observer) {
+		this.obsevers.remove(observer);
 	}
 
 	public Set<CellReference> getObseverReferences() {
@@ -46,48 +43,34 @@ public class Cell {
 
 	}
 
-	public Set<Cell> getCellDependsOn() {
-		return this.dependencies;
+	public void addDependancy(Cell dependancy) {
+		this.dependencies.add(dependancy);
+	}
+
+	public void clearDependancies() {
+		this.dependencies.clear();
 	}
 
 	public ExpressionTreeNode<CellReference> getExpression() {
 		return this.expression;
 	}
 
-	public void setNodeTree(ExpressionTreeNode<CellReference> expression, ReferenceContext<CellReference> context) {
+	public void setExpression(ExpressionTreeNode<CellReference> expression, ReferenceContext<CellReference> context) {
 		this.expression = expression;
-		this.cachedValue = expression.getValue(context);
-	}
-
-	public void setValue(Double value, ReferenceContext<CellReference> context) {
-		this.cachedValue = value;
-		this.expression = null;
+		this.calculateValue(context);
 	}
 
 	void calculateValue(ReferenceContext<CellReference> context) {
 		if (this.expression != null) {
 			this.cachedValue = this.expression.getValue(context);
 			for (Cell observer : this.obsevers) {
-				context.getCell(observer.getCellReference()).calculateValue(context);
+				observer.calculateValue(context);
 			}
 		}
 	}
 
 	public CellReference getCellReference() {
 		return this.cellReference;
-	}
-
-	public Set<Cell> getTransitiveObservers(ReferenceContext<CellReference> context, Set<Cell> cells) {
-		for (Cell current : context.getCells(this.obsevers)) {
-			if (cells.contains(current)) {
-				return cells;
-			} else {
-				cells.add(current);
-				return this.getTransitiveObservers(context, cells);
-			}
-		}
-		return cells;
-
 	}
 
 	@Override
