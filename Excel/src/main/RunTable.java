@@ -16,13 +16,13 @@ public class RunTable {
 		int numberOfColumns = Integer.parseInt(args[1]);
 		Table table = new Table(numberOfRows, numberOfColumns);
 		TablePrinter tp = new TablePrinter();
-		ConsoleInputParser cip = new ConsoleInputParser();
+		ConsoleInputParser parser = new ConsoleInputParser();
 		while (true) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Enter Value");
 			String s = br.readLine();
 			try {
-				String expressionToPrint = cip.addCell(s, table);
+				String expressionToPrint = parser.addCell(s, table);
 				tp.printTable(table, new PrintWriter(System.out));
 				if (expressionToPrint != null) {
 					System.out.println(expressionToPrint);
