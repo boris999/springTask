@@ -216,6 +216,11 @@ public class ExpressionTreeFactoryTest {
 	}
 
 	@Test
+	public void testUnaryOperatorWithBrackets() {
+		this.checkParsed(new ValueNode<CellReference>(5), "-(4 * A1 - B2 + C3 ^ 3) - 6");
+	}
+
+	@Test
 	public void testExcessiveBrackets() {// (((B3-B1)*A4)/B9)-2)
 		BinaryOperatorNode<CellReference> first = new BinaryOperatorNode<>(new ReferenceNode<>(new CellReference(1, 2)),
 				new ReferenceNode<>(new CellReference(1, 0)), BinaryOperator.MINUS);

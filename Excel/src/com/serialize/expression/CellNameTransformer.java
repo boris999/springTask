@@ -13,8 +13,7 @@ public interface CellNameTransformer {
 	public static final int MAX_COLUMN_NUMBER = 676;
 	public static final Pattern CELL_NAME_PATTERN = Pattern.compile("([\\w&&[^\\d]]{1,3}+)(\\d{1,6}+)", Pattern.CASE_INSENSITIVE);
 	public static final List<String> ALPHABET = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q",
-			"R", "S", "T", "U", "V", "W",
-			"X", "Y", "Z");
+			"R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
 	public static CellReference convertCellNameToIndex(String cellName) {
 		Matcher matcher = CellNameTransformer.CELL_NAME_PATTERN.matcher(cellName);

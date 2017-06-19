@@ -127,17 +127,19 @@ public class BinaryOperatorNode<T> implements ExpressionTreeNode<T> {
 	}
 
 	@Override
-	public Set<T> getTransitiveReferences(ReferenceContext<T> context) {
-		Set<T> tempSet = new HashSet<>();
-		Set<T> leftSet = this.left.getTransitiveReferences(context);
-		Set<T> rightSet = this.right.getTransitiveReferences(context);
-		if (leftSet != null) {
+	public Set<T> getDirectReferences(ReferenceContext<T> context) {
+		Set<T> leftSet = this.left.getDirectReferences(context);
+		Set<T> rightSet = this.right.getDirectReferences(context);
+		if (leftSet.isEmpty()) {
+			return rightSet;
+		} else if (rightSet.isEmpty()) {
+			return leftSet;
+		} else {
+			Set<T> tempSet = new HashSet<>();
 			tempSet.addAll(leftSet);
-		}
-		if (rightSet != null) {
 			tempSet.addAll(rightSet);
+			return tempSet;
 		}
-		return tempSet;
 	}
 
 	public boolean hasRight() {

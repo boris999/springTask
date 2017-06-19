@@ -2,6 +2,7 @@ package com.model.table;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.model.expression.ExpressionTreeNode;
 import com.model.expression.ReferenceContext;
@@ -18,7 +19,7 @@ public class Table implements ReferenceContext<CellReference> {
 		this.cells = new Cell[this.columnCount][this.rowCount];
 		for (int i = 0; i < columnCount; i++) {
 			for (int j = 0; j < rowCount; j++) {
-				this.cells[i][j] = new Cell(new CellReference(i, j));
+				this.cells[i][j] = new Cell();
 			}
 		}
 	}
@@ -33,29 +34,26 @@ public class Table implements ReferenceContext<CellReference> {
 
 	@Override
 	public Double getValue(CellReference reference) {
-		Cell cell = this.getCell(reference);
-		return cell.getCachedValue(this);
+		return this.getValue(reference.getColumnIndex(), reference.getRowIndex());
 	}
 
-	@Override
 	public Double getValue(int columnIndex, int rowIndex) {
-		return this.getCell(columnIndex, rowIndex).getCachedValue(this);
+		return this.getCell(columnIndex, rowIndex).getCachedValue();
 
 	}
 
 	public void setExpression(CellReference cellReference, ExpressionTreeNode<CellReference> expression) {
 		Cell cell = this.checkForCircularReference(cellReference, expression);
 		// remove old links
-		cell.setExpression(expression, this);
-		cell.calculateValue(this);
 		this.clearCellLinks(cellReference);
 		// set new links
-		Set<CellReference> currentCellDependsOn = cell.getExpression().getTransitiveReferences(this);
+		cell.setExpression(expression, this);
+		Set<CellReference> currentCellDependsOn = cell.getExpression().getDirectReferences(this);
 		for (CellReference s : currentCellDependsOn) {
 			Cell currentCellDependsOnCurrent = this.getCell(s);
 			currentCellDependsOnCurrent.addObserver(cell);
-			cell.addDependancy(currentCellDependsOnCurrent);
 		}
+		cell.calculateValue(this);
 	}
 
 	public ExpressionTreeNode<CellReference> getExpression(CellReference reference) {
@@ -73,9 +71,9 @@ public class Table implements ReferenceContext<CellReference> {
 
 	private Cell checkForCircularReference(CellReference cellReference, ExpressionTreeNode<CellReference> expression) {
 		Cell cellToAdd = this.getCell(cellReference);
-		Set<CellReference> copyOfObservers = new HashSet<>(cellToAdd.getObseverReferences());
-		copyOfObservers.retainAll(expression.getTransitiveReferences(this));
-		if (!copyOfObservers.isEmpty()) {
+		Set<Cell> transitiveReferenceSet = this.getTransitiveDependancies(expression, new HashSet<Cell>());
+		Set<Cell> observers = cellToAdd.getObservers();
+		if (this.containsAny(transitiveReferenceSet, observers)) {
 			throw new IllegalArgumentException("Circylar reference!");
 		}
 		return cellToAdd;
@@ -86,7 +84,27 @@ public class Table implements ReferenceContext<CellReference> {
 		for (CellReference c : currentCell.getDependanciesReferences(this)) {
 			this.getCell(c).removeObserver(currentCell);
 		}
-		currentCell.clearDependancies();
 	}
 
+	private boolean containsAny(Set<Cell> first, Set<Cell> toCheckIfAnyElementIsContainedInFirstSet) {
+		for (Cell c : toCheckIfAnyElementIsContainedInFirstSet) {
+			if (first.contains(c)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private Set<Cell> getTransitiveDependancies(ExpressionTreeNode<CellReference> expression, Set<Cell> dependancies) {
+		if (expression != null) {
+			Set<Cell> cells = expression.getDirectReferences(this).stream().map(e -> this.getCell(e)).collect(Collectors.toSet());
+			dependancies.addAll(cells);
+			for (Cell c : cells) {
+				if (c.getExpression() != null) {
+					this.getTransitiveDependancies(c.getExpression(), dependancies);
+				}
+			}
+		}
+		return dependancies;
+	}
 }

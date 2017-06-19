@@ -41,10 +41,11 @@ public class ReferenceNode<T> implements ExpressionTreeNode<T> {
 	}
 
 	@Override
-	public Set<T> getTransitiveReferences(ReferenceContext<T> context) {
-		Set<T> tempSet = new HashSet<>();
-		tempSet.add(this.reference);
-		return tempSet;
+	public Set<T> getDirectReferences(ReferenceContext<T> context) {
+		// return Collections.singleton(this.reference); cannot addIt
+		Set<T> referencies = new HashSet<>();
+		referencies.add(this.reference);
+		return referencies;
 	}
 
 	@Override

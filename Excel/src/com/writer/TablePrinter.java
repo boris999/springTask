@@ -12,13 +12,15 @@ public class TablePrinter {
 	static final int FREE_SPACE_PER_CELL = 2;
 
 	public void printTable(Table table, PrintWriter writer) {
-		int totalLength = this.calculateTotalLength(table);
-		int maxCellWidth = this.calculateCellWidth(table);
-		this.printHeader(totalLength, table, writer, maxCellWidth);
-		for (int i = 0; i < table.getRowCount(); i++) {
-			this.printRow(i, table, writer, maxCellWidth);
+		int columnCount = table.getColumnCount();
+		int rowCount = table.getRowCount();
+		int totalLength = this.calculateTotalLength(table, columnCount, rowCount);
+		int maxCellWidth = this.calculateCellWidth(table, columnCount, rowCount);
+		this.printHeader(totalLength, writer, maxCellWidth, columnCount);
+		for (int i = 0; i < rowCount; i++) {
+			this.printRow(i, table, writer, maxCellWidth, columnCount);
 			writer.println();
-			if (i != (table.getRowCount() - 1)) {
+			if (i != (rowCount - 1)) {
 
 				this.printLine("-", totalLength, writer);
 				writer.println();
@@ -28,32 +30,31 @@ public class TablePrinter {
 		writer.flush();
 	}
 
-	private int calculateTotalLength(Table table) {
+	private int calculateTotalLength(Table table, int columnCount, int rowCount) {
 		int totalLength = ROW_NUMBER_COLUMN_WIDTH;
-		int numberOfColumns = table.getColumnCount();
-		int maxColumnWidth = this.calculateCellWidth(table);
-		totalLength += (maxColumnWidth + FREE_SPACE_PER_CELL + 1) * numberOfColumns;
+		int maxColumnWidth = this.calculateCellWidth(table, columnCount, rowCount);
+		totalLength += (maxColumnWidth + FREE_SPACE_PER_CELL + 1) * columnCount;
 		return totalLength;
 	}
 
-	private void printHeader(int totalLength, Table table, PrintWriter writer, int maxCellWidth) {
+	private void printHeader(int totalLength, PrintWriter writer, int maxCellWidth, int columnCount) {
 		this.printLine("=", totalLength, writer);
 		writer.println();
 		writer.print("| ROW |");
-		CellNameTransformer.calculateColumnNames().stream().limit(table.getColumnCount())
+		CellNameTransformer.calculateColumnNames().stream().limit(columnCount)
 				.forEach(x -> writer.print(this.getFormatedString(x, maxCellWidth) + "|"));
 		writer.println();
 		this.printLine("=", totalLength, writer);
 		writer.println();
 	}
 
-	private void printRow(int rowNumber, Table table, PrintWriter writer, int maxCellWidth) {
+	private void printRow(int rowCount, Table table, PrintWriter writer, int maxCellWidth, int columnCount) {
 		writer.print("|");
-		writer.print(this.getFormatedRowNumber(rowNumber + 1));
+		writer.print(this.getFormatedrowCount(rowCount + 1));
 		writer.print("|");
-		for (int i = 0; i < table.getColumnCount(); i++) {
-			Double value = table.getValue(i, rowNumber);
-			writer.print(this.getFormatedString(this.printValue(value, table), maxCellWidth) + "|");
+		for (int i = 0; i < columnCount; i++) {
+			Double value = table.getValue(i, rowCount);
+			writer.print(this.getFormatedString(this.printValue(value), maxCellWidth) + "|");
 		}
 	}
 
@@ -69,8 +70,8 @@ public class TablePrinter {
 
 	}
 
-	private String getFormatedRowNumber(int rowNumber) {
-		return String.format("%5s", String.valueOf(rowNumber));
+	private String getFormatedrowCount(int rowCount) {
+		return String.format("%5s", String.valueOf(rowCount));
 	}
 
 	private String formaterForString(int maxCellWidth) {
@@ -81,10 +82,10 @@ public class TablePrinter {
 		return String.format(this.formaterForString(maxCellWidth), toBeFormated);
 	}
 
-	private int calculateCellWidth(Table table) {
+	private int calculateCellWidth(Table table, int columnCount, int rowCount) {
 		Double maxValue = 0.0;
-		for (int row = 0; row < table.getRowCount(); row++) {
-			for (int column = 0; column < table.getColumnCount(); column++) {
+		for (int row = 0; row < rowCount; row++) {
+			for (int column = 0; column < columnCount; column++) {
 				Double value = table.getValue(column, row);
 				if (value == null) {
 					continue;
@@ -99,7 +100,7 @@ public class TablePrinter {
 		return String.format("%.2f", maxValue).length();
 	}
 
-	private String printValue(Double value, Table table) {
+	private String printValue(Double value) {
 		if (value != null) {
 			return String.format("%.2f", value);
 		} else {
