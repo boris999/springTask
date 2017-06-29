@@ -1,7 +1,9 @@
 package com.model.expression;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 public class ValueNode<T> implements ExpressionTreeNode<T> {
 	private double value;
@@ -16,12 +18,7 @@ public class ValueNode<T> implements ExpressionTreeNode<T> {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		long temp;
-		temp = Double.doubleToLongBits(this.value);
-		result = (prime * result) + (int) (temp ^ (temp >>> 32));
-		return result;
+		return Objects.hash(this.value);
 	}
 
 	@Override
@@ -36,14 +33,12 @@ public class ValueNode<T> implements ExpressionTreeNode<T> {
 			return false;
 		}
 		ValueNode<?> other = (ValueNode<?>) obj;
-		if (Double.doubleToLongBits(this.value) != Double.doubleToLongBits(other.value)) {
-			return false;
-		}
-		return true;
+
+		return Double.doubleToLongBits(this.value) == Double.doubleToLongBits(other.value);
 	}
 
 	@Override
-	public String toString() {
+	public String toString(Function<T, String> referenceFormatter) {
 		return String.valueOf(this.value);
 	}
 
@@ -53,7 +48,7 @@ public class ValueNode<T> implements ExpressionTreeNode<T> {
 	}
 
 	@Override
-	public Set<T> getDirectReferences(ReferenceContext<T> context) {
+	public Set<T> getReferences() {
 		return Collections.emptySet();
 	}
 

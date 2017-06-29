@@ -1,6 +1,7 @@
 package com.model.table;
 
-import com.serialize.expression.CellNameTransformer;
+import java.util.Objects;
+import java.util.function.Function;
 
 public class CellReference {
 	private final int columnIndex;
@@ -13,11 +14,7 @@ public class CellReference {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (prime * result) + this.columnIndex;
-		result = (prime * result) + this.rowIndex;
-		return result;
+		return Objects.hash(this.columnIndex, this.rowIndex);
 	}
 
 	@Override
@@ -32,13 +29,9 @@ public class CellReference {
 			return false;
 		}
 		CellReference other = (CellReference) obj;
-		if (this.columnIndex != other.columnIndex) {
-			return false;
-		}
-		if (this.rowIndex != other.rowIndex) {
-			return false;
-		}
-		return true;
+
+		return (this.columnIndex == other.columnIndex) &&
+				(this.rowIndex == other.rowIndex);
 	}
 
 	public int getColumnIndex() {
@@ -49,9 +42,8 @@ public class CellReference {
 		return this.rowIndex;
 	}
 
-	@Override
-	public String toString() {
-		return CellNameTransformer.calculateColumnNames().get(this.columnIndex) + String.valueOf(this.rowIndex + 1);
+	public String toString(Function<CellReference, String> referenceFormatter) {
+		return referenceFormatter.apply(this);
 	}
 
 }

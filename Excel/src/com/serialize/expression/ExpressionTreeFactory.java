@@ -169,7 +169,7 @@ public final class ExpressionTreeFactory {
 	private static StringBuilder putReferenceOrTreeNodeInStack(Stack<ExpressionTreeNode<CellReference>> stack, StringBuilder sb, Condition hasLetter,
 			Condition hasDigit) {
 		if (hasLetter.equals(Condition.TRUE) && hasDigit.equals(Condition.TRUE)) {
-			stack.push(new ReferenceNode<>(CellNameTransformer.convertCellNameToIndex(sb.toString())));
+			stack.push(new ReferenceNode<>(CellNameTransformer.convertCellNameToReference(sb.toString())));
 		} else if (hasLetter.equals(Condition.FALSE) && hasDigit.equals(Condition.TRUE)) {
 			stack.push(new ValueNode<CellReference>(Double.parseDouble(sb.toString())));
 		}

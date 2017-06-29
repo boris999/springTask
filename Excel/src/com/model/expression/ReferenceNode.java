@@ -1,7 +1,9 @@
 package com.model.expression;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 public class ReferenceNode<T> implements ExpressionTreeNode<T> {
 	private final T reference;
@@ -12,10 +14,7 @@ public class ReferenceNode<T> implements ExpressionTreeNode<T> {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = (prime * result) + ((this.reference == null) ? 0 : this.reference.hashCode());
-		return result;
+		return Objects.hash(this.reference);
 	}
 
 	@Override
@@ -30,22 +29,12 @@ public class ReferenceNode<T> implements ExpressionTreeNode<T> {
 			return false;
 		}
 		ReferenceNode<?> other = (ReferenceNode<?>) obj;
-		if (this.reference == null) {
-			if (other.reference != null) {
-				return false;
-			}
-		} else if (!this.reference.equals(other.reference)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(this.reference, other.reference);
 	}
 
 	@Override
-	public Set<T> getDirectReferences(ReferenceContext<T> context) {
-		// return Collections.singleton(this.reference); cannot addIt
-		Set<T> referencies = new HashSet<>();
-		referencies.add(this.reference);
-		return referencies;
+	public Set<T> getReferences() {
+		return Collections.singleton(this.reference);
 	}
 
 	@Override
@@ -54,8 +43,8 @@ public class ReferenceNode<T> implements ExpressionTreeNode<T> {
 	}
 
 	@Override
-	public String toString() {
-		return this.reference.toString();
+	public String toString(Function<T, String> referenceFormatter) {
+		return referenceFormatter.apply(this.reference);
 	}
 
 }

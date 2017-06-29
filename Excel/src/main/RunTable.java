@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 
 import com.model.table.Table;
 import com.serialize.expression.ConsoleInputParser;
+import com.writer.FormulaPrinter;
 import com.writer.TablePrinter;
 
 public class RunTable {
@@ -15,22 +16,27 @@ public class RunTable {
 		int numberOfRows = Integer.parseInt(args[0]);
 		int numberOfColumns = Integer.parseInt(args[1]);
 		Table table = new Table(numberOfRows, numberOfColumns);
-		TablePrinter tp = new TablePrinter();
+		TablePrinter tablePrinter = new TablePrinter();
+		FormulaPrinter formPrinter = new FormulaPrinter();
 		ConsoleInputParser parser = new ConsoleInputParser();
 		while (true) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 			System.out.println("Enter Value");
 			String s = br.readLine();
-			try {
-				String expressionToPrint = parser.addCell(s, table);
-				tp.printTable(table, new PrintWriter(System.out));
-				if (expressionToPrint != null) {
-					System.out.println(expressionToPrint);
+			if ("?".equals(s)) {
+				formPrinter.printTable(table, new PrintWriter(System.out));
+			} else {
+				try {
+					String expressionToPrint = parser.addCell(s, table);
+					tablePrinter.printTable(table, new PrintWriter(System.out));
+					if (expressionToPrint != null) {
+						System.out.println(expressionToPrint);
+					}
+				} catch (IllegalArgumentException e) {
+					System.out.println(e.getMessage());
+				} catch (ArrayIndexOutOfBoundsException ex) {
+					System.out.println("Invalid cell reference");
 				}
-			} catch (IllegalArgumentException e) {
-				System.out.println(e.getMessage());
-			} catch (ArrayIndexOutOfBoundsException ex) {
-				System.out.println("Invalid cell reference");
 			}
 
 		}

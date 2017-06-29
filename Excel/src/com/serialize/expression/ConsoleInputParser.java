@@ -9,9 +9,10 @@ public class ConsoleInputParser {
 	public String addCell(String expression, Table table) {
 		String[] array = expression.split("=");
 		String cellName = array[0].trim().toUpperCase();
-		CellReference reference = CellNameTransformer.convertCellNameToIndex(cellName);
+		CellReference reference = CellNameTransformer.convertCellNameToReference(cellName);
 		if ((array.length == 1)) {
-			return cellName + "=" + table.getExpression(reference);
+			ExpressionTreeNode<CellReference> currentExpression = table.getExpression(reference);
+			return cellName + "=" + (currentExpression != null ? currentExpression.toString(CellNameTransformer::getCellName) : "");
 		}
 		if ((array.length != 2)) {
 			throw new IllegalArgumentException("Enter valid argument!");

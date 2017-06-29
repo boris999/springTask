@@ -1,23 +1,18 @@
 package com.serialize.expression;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.model.table.CellReference;
 
-public interface CellNameTransformer {
-	public static final int MAX_COLUMN_NUMBER = 676;
+public class CellNameTransformer {
 	public static final Pattern CELL_NAME_PATTERN = Pattern.compile("([\\w&&[^\\d]]{1,3}+)(\\d{1,6}+)", Pattern.CASE_INSENSITIVE);
-	public static final List<String> ALPHABET = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q",
-			"R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
-	public static CellReference convertCellNameToIndex(String cellName) {
+	public static CellReference convertCellNameToReference(String cellName) {
 		Matcher matcher = CellNameTransformer.CELL_NAME_PATTERN.matcher(cellName);
-		CellReference reference = null;
 		String column = null;
 		Integer row = null;
 		if (matcher.matches()) {
@@ -26,28 +21,43 @@ public interface CellNameTransformer {
 		} else {
 			throw new IllegalArgumentException("Invalid cell name");
 		}
-		int columnIndex = 0;
-		for (String s : calculateColumnNames()) {
-			if (s.equals(column)) {
-				reference = new CellReference(columnIndex, row);
-				break;
-			} else {
-				columnIndex++;
-			}
-		}
-		return reference;
+		int columnIndex = getcolumnIndex(column);
+
+		return new CellReference(columnIndex, row);
 	}
 
-	public static List<String> calculateColumnNames() {
-		int numberOfLetters = ALPHABET.size();
-		List<String> copy = new LinkedList<>(ALPHABET);
-		int alphabetIndex = 0;
-		for (int i = 0; i < (MAX_COLUMN_NUMBER - numberOfLetters); i++) {
-			alphabetIndex = i / numberOfLetters;
-			copy.add(ALPHABET.get(alphabetIndex) + ALPHABET.get(i % ALPHABET.size()));
-
+	public static List<String> calculateColumnNames(int columnCount) {
+		List<String> columnNames = new ArrayList<>();
+		for (int i = 0; i < columnCount; i++) {
+			columnNames.add(getColumnName(i));
 		}
-		return Collections.unmodifiableList(copy);
+		return Collections.unmodifiableList(columnNames);
+	}
+
+	private static int getcolumnIndex(String columnName) {
+		int result = 0;
+		for (int i = 0; i < columnName.length(); i++) {
+			result *= 26;
+			result += (columnName.charAt(i) - 'A') + 1;
+		}
+		return result - 1;
+	}
+
+	private static String getColumnName(int index) {
+		final StringBuilder sb = new StringBuilder();
+		int num = index;
+		while (num >= 0) {
+			int numChar = (num % 26) + 65;
+			sb.append((char) numChar);
+			num = (num / 26) - 1;
+		}
+		return sb.reverse().toString();
+	}
+
+	public static String getCellName(CellReference reference) {
+		String columnName = CellNameTransformer.getColumnName(reference.getColumnIndex());
+		int row = reference.getRowIndex() + 1;
+		return columnName + row;
 	}
 
 }

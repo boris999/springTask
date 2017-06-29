@@ -13,11 +13,11 @@ class Cell {
 	private ExpressionTreeNode<CellReference> expression;
 	private Set<Cell> obsevers = new HashSet<>();
 
-	public Set<CellReference> getDependanciesReferences(ReferenceContext<CellReference> context) {
+	public Set<CellReference> getReferences() {
 		if (this.expression != null) {
-			return this.expression.getDirectReferences(context);
+			return this.expression.getReferences();
 		}
-		return new HashSet<>();
+		return Collections.emptySet();
 	}
 
 	public Double getCachedValue() {
