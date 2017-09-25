@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import com.model.table.Table;
 import com.serialize.expression.ConsoleInputParser;
 import com.writer.FormulaPrinter;
+import com.writer.Printer;
 import com.writer.TablePrinter;
 
 public class RunTable {
@@ -16,8 +17,8 @@ public class RunTable {
 		int numberOfRows = Integer.parseInt(args[0]);
 		int numberOfColumns = Integer.parseInt(args[1]);
 		Table table = new Table(numberOfRows, numberOfColumns);
-		TablePrinter tablePrinter = new TablePrinter();
-		FormulaPrinter formPrinter = new FormulaPrinter();
+		Printer tablePrinter = new TablePrinter();
+		Printer formPrinter = new FormulaPrinter();
 		ConsoleInputParser parser = new ConsoleInputParser();
 		while (true) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
