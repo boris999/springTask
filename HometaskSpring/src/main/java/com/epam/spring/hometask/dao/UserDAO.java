@@ -4,9 +4,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.epam.spring.homework.domain.User;
-import com.epam.spring.homework.exceptions.AlreadyExistsException;
-import com.epam.spring.homework.exceptions.NotFoundException;
+import com.epam.spring.hometask.domain.User;
+import com.epam.spring.hometask.exeptions.AlreadyExistsException;
+import com.epam.spring.hometask.exeptions.NotFoundException;
 
 @Local
 @Stateless

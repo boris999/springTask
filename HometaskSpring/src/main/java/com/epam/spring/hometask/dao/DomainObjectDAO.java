@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.epam.spring.homework.domain.DomainObject;
-import com.epam.spring.homework.exceptions.NotFoundException;
+import com.epam.spring.hometask.domain.DomainObject;
+import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public class DomainObjectDAO {
 	static Map<DomainObject, DomainObject> db = new ConcurrentHashMap<>();
