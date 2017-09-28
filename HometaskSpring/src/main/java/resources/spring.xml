@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<import resource="discount.xml" />
+
+	<bean id="auditorium1" class="com.epam.spring.hometask.domain.Auditorium">
+		<property name="name" value="${auditorium1.name}" />
+		<property name="numberOfSeats" value="${auditorium1.numberOfSeats}" />
+		<property name=" vipSeats ">
+			<set>
+				<value>${auditorium1.vipseat1}</value>
+				<value>${auditorium1.vipseat2}</value>
+				<value>${auditorium1.vipseat3}</value>
+				<value>${auditorium1.vipseat4}</value>
+			</set>
+		</property>
+	</bean>
+	<bean id="auditorium2" class="com.epam.spring.hometask.domain.Auditorium">
+		<property name="name" value="${auditorium2.name}" />
+		<property name="numberOfSeats" value="${auditorium2.numberOfSeats}" />
+		<property name=" vipSeats ">
+			<set>
+				<value>${auditorium2.vipseat1}</value>
+				<value>${auditorium2.vipseat2}</value>
+				<value>${auditorium2.vipseat3}</value>
+			</set>
+		</property>
+	</bean>
+	<bean id="userService" class="com.epam.spring.hometask.service.UserService">
+		<constructor-arg>
+			<bean class="com.epam.spring.hometask.dao.UserDAO" />
+		</constructor-arg>
+	</bean>
+	<bean id="eventService" class="com.epam.spring.hometask.service.EventService" init-method="setApplicationContext">
+		<constructor-arg>
+			<bean class="com.epam.spring.hometask.dao.EventDAO" />
+		</constructor-arg>
+		<constructor-arg>
+		<bean class="com.epam.spring.hometask.console.EventCreator" />
+		</constructor-arg>
+	</bean>
+	<bean id="auditoriumService" class="com.epam.spring.hometask.service.AuditoriumService">
+		<constructor-arg>
+			<list>
+				<ref bean="auditorium1"/>
+				<ref bean="auditorium2"/>
+			</list>
+		</constructor-arg>
+	</bean>
+
+
+
+
+
+
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>auditorium.properties</value>
+			</list>
+		</property>
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="systemPropertiesMode" value="override " />
+	</bean>
+</beans>

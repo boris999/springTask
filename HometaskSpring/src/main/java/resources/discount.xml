@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+	<beans>
+		<bean id="discountStrategy" class="com.epam.spring.hometask.service.DiscountStrategy"
+			abstract="true">
+			<property name="birthdayDiscount" value="5" />
+			<property name="volumeDiscount" value="50" />
+			<property name="numberOfTicketsTogetVolumeDiscount" value="10" />
+		</bean>
+		<bean id="discountStrategyBirthDay" class="com.epam.spring.hometask.service.DiscountStrategy"
+			parent="discountStrategy">
+			<property name="birthday" value="true" />
+		</bean>
+		<bean id="discountStrategyVolume" class="com.epam.spring.hometask.service.DiscountStrategy"
+			parent="discountStrategy">
+			<property name="birthday" value="false" />
+		</bean>
+		<bean id="discountService" class="com.epam.spring.hometask.service.DiscountService"
+			depends-on="discountStrategyBirthDay, discountStrategyVolume">
+			<property name="discountStrategies">
+				<list>
+					<ref bean="discountStrategyBirthDay" />
+					<ref bean="discountStrategyVolume" />
+				</list>
+			</property>
+		</bean>
+
+
+	</beans>

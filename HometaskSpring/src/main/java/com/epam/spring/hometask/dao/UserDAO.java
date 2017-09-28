@@ -5,32 +5,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.epam.spring.hometask.domain.User;
-import com.epam.spring.hometask.exeptions.AlreadyExistsException;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
-@Local
-@Stateless
 public class UserDAO extends DomainObjectDAO {
-
+	// TODO getById to return casted from here
 	public void saveUser(User user) throws Exception {
-		if (db.keySet().stream()
-				.filter(o -> o.getClass().equals(User.class))
-				.map(dom -> (User) dom)
-				.filter(u -> u.getEmail().equals(user.getEmail()))
-				.findFirst().isPresent()) {
-			throw new AlreadyExistsException("There is already an user with the same e-mail");
-		}
-		db.put(user, user);
+		this.saveDomainObject(user);
 	}
 
 	public void removeUser(User user) {
-		db.remove(user);
+		this.removeDomainObject(user);
 	}
 
 	public User getUserByEmail(String email) throws NotFoundException {
-		final Optional<User> user = db.keySet().stream()
-				.filter(o -> o.getClass().equals(User.class))
-				.map(dom -> (User) dom)
+		final Optional<User> user = this.getAllUsers().stream()
 				.filter(u -> u.getEmail().equals(email))
 				.findFirst();
 		if (user.isPresent()) {
@@ -41,8 +29,7 @@ public class UserDAO extends DomainObjectDAO {
 	}
 
 	public Set<User> getAllUsers() {
-		return db.keySet().stream()
-				.filter(o -> o.getClass().equals(User.class))
+		return this.getAllOfSameType(User.class).stream()
 				.map(dom -> (User) dom).collect(Collectors.toSet());
 	}
 
