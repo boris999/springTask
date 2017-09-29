@@ -19,7 +19,7 @@ public class EventDAO extends DomainObjectDAO {
 		this.removeDomainObject(event);
 	}
 
-	public Event getUserByEmail(String email) throws NotFoundException {
+	public Event getEventByEmail(String email) throws NotFoundException {
 		final Optional<Event> event = this.getAllEvents().stream()
 				.filter(u -> u.getName().equals(email))
 				.findFirst();

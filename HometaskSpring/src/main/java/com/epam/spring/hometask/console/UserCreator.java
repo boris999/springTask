@@ -4,19 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import com.epam.spring.hometask.dao.EventDAO;
-import com.epam.spring.hometask.dao.UserDAO;
-import com.epam.spring.hometask.domain.Event;
+import com.epam.spring.hometask.domain.User;
 
 public class UserCreator {
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
 
-	public Event createEvent(UserDAO dao) throws IOException {
+	public User createUser() throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter user first name:");
 		String first = br.readLine();
@@ -37,17 +34,22 @@ public class UserCreator {
 				System.out.print("Invalid entry try again. ");
 			}
 		}
-		//TODO to fix concurency when id is received from map and Object not saved yet!
-		dao.getAllUsers()
+		User user = new User();
+		user.setBirthday(birthday);
+		user.setEmail(email);
+		user.setFirstName(first);
+		user.setLastName(last);
+		return user;
+	}
 
-	}id
-
-	private String firstName;
-
-	private String lastName;
-
-	private String email;
-
-	private LocalDate birthday;
+	// id
+	//
+	// private String firstName;
+	//
+	// private String lastName;
+	//
+	// private String email;
+	//
+	// private LocalDate birthday;
 
 }

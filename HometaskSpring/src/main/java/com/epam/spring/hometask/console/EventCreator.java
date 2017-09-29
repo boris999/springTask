@@ -11,7 +11,6 @@ import java.util.Optional;
 
 import org.springframework.context.ApplicationContext;
 
-import com.epam.spring.hometask.dao.EventDAO;
 import com.epam.spring.hometask.domain.Auditorium;
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.domain.EventRating;
@@ -20,7 +19,7 @@ public class EventCreator {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy hh:mm");
 
-	public Event createEvent(EventDAO dao, ApplicationContext context) throws IOException {
+	public Event createEvent(ApplicationContext context) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Enter event name:");
 		String name = br.readLine();
@@ -72,6 +71,7 @@ public class EventCreator {
 				String auditorium = br.readLine();
 				audi = map.values().stream().filter(a -> a.getName().equalsIgnoreCase(auditorium)).findFirst();
 			}
+			// TODO to check if not booked!!
 			selectedAuditorium = audi.get();
 			addedAUditoriumAndAirDate = event.addAirDateTime(airDateTime, selectedAuditorium);
 			if (!addedAUditoriumAndAirDate) {
@@ -82,12 +82,6 @@ public class EventCreator {
 		event.setName(name);
 		event.setBasePrice(basePrice);
 		event.setRating(eRating);
-		Optional<Long> lastEventID = dao.getAllEvents().stream().map(e -> e.getId()).max((l1, l2) -> (Long.compare(l1, l2)));
-		if (lastEventID.isPresent()) {
-			event.setId(lastEventID.get() + 1);
-		} else {
-			event.setId(1L);
-		}
 		br.close();
 		return event;
 	}

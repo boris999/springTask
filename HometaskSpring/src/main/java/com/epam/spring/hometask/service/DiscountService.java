@@ -4,14 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.domain.User;
 
 public class DiscountService {
 
 	private List<DiscountStrategy> discountStrategies;
 
-	public int getDiscount(User user, Event event, LocalDateTime dateTime, int numberOfTickets) {
+	public int getDiscount(User user, LocalDateTime dateTime, int numberOfTickets) {
 		int maxDiscount = 0;
 		for (DiscountStrategy ds : this.discountStrategies) {
 			if ((user == null) || (ds.isBirthday() && !this.eligibleForBirthdayDiscount(user, dateTime))) {

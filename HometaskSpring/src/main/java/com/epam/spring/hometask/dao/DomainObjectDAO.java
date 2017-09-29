@@ -12,7 +12,7 @@ import com.epam.spring.hometask.exeptions.NotFoundException;
 public class DomainObjectDAO {
 	static Map<DomainObject, DomainObject> db = new ConcurrentHashMap<>();
 
-	public DomainObject getUserById(long id) throws NotFoundException {
+	public DomainObject getById(long id) throws NotFoundException {
 		final Optional<DomainObject> entry = db.keySet().stream().filter(u -> u.getId().equals(id)).findFirst();
 		if (entry.isPresent()) {
 			return entry.get();
