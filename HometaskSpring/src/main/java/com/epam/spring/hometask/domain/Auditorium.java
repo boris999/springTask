@@ -15,6 +15,8 @@ public class Auditorium {
 	private String name;
 
 	private long numberOfSeats;
+	
+	private double extraPayForVipSeat;
 
 	private Set<Long> vipSeats = Collections.emptySet();
 

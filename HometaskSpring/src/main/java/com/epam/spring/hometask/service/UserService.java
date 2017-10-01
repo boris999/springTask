@@ -10,6 +10,7 @@ import org.springframework.context.ApplicationContextAware;
 import com.epam.spring.hometask.console.UserCreator;
 import com.epam.spring.hometask.dao.UserDAO;
 import com.epam.spring.hometask.domain.User;
+import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public class UserService implements ApplicationContextAware {
 
@@ -24,17 +25,27 @@ public class UserService implements ApplicationContextAware {
 	public void createUser() throws IOException {
 		User user = this.creator.createUser();
 		synchronized (user) {
-			Optional<Long> lastEventID = this.dao.getAllUsers().stream().map(e -> e.getId()).max((l1, l2) -> (Long.compare(l1, l2)));
-			if (lastEventID.isPresent()) {
-				user.setId(lastEventID.get() + 1);
+			Optional<Long> lastUserID = this.dao.getAllUsers().stream().map(u -> u.getId()).max((l1, l2) -> (Long.compare(l1, l2)));
+			if (lastUserID.isPresent()) {
+				user.setId(lastUserID.get() + 1);
 			} else {
 				user.setId(1L);
 			}
 		}
 		this.dao.saveUser(user);
-		System.out.println("Event saved");
 	}
-	// save, remove, getById, getUserByEmail, getAll
+	
+	public void removeUser(User user){
+		dao.removeUser(user);
+	}
+	
+	public User getUserById(long id) throws NotFoundException{
+		return dao.getById(id);
+	}
+	
+	public User getUserByEmail(String email) throws NotFoundException{
+		return dao.getUserByEmail(email);
+	}
 
 	@Override
 	public void setApplicationContext(ApplicationContext context) throws BeansException {

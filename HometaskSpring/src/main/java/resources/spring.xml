@@ -10,6 +10,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 	<bean id="auditorium1" class="com.epam.spring.hometask.domain.Auditorium">
 		<property name="name" value="${auditorium1.name}" />
 		<property name="numberOfSeats" value="${auditorium1.numberOfSeats}" />
+		<property name="extraPayForVipSeat" value="${auditorium1.extraPayForVipSeat}" />
 		<property name=" vipSeats ">
 			<set>
 				<value>${auditorium1.vipseat1}</value>
@@ -22,6 +23,7 @@ http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 	<bean id="auditorium2" class="com.epam.spring.hometask.domain.Auditorium">
 		<property name="name" value="${auditorium2.name}" />
 		<property name="numberOfSeats" value="${auditorium2.numberOfSeats}" />
+		<property name="extraPayForVipSeat" value="${auditorium2.extraPayForVipSeat}" />
 		<property name=" vipSeats ">
 			<set>
 				<value>${auditorium2.vipseat1}</value>
@@ -35,29 +37,31 @@ http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 			<bean class="com.epam.spring.hometask.dao.UserDAO" />
 		</constructor-arg>
 	</bean>
-	<bean id="eventService" class="com.epam.spring.hometask.service.EventService" >
+	<bean id="eventService" class="com.epam.spring.hometask.service.EventService">
 		<constructor-arg>
 			<bean class="com.epam.spring.hometask.dao.EventDAO" />
 		</constructor-arg>
 		<constructor-arg>
-		<bean class="com.epam.spring.hometask.console.EventCreator" />
+			<bean class="com.epam.spring.hometask.console.EventCreator" />
 		</constructor-arg>
 	</bean>
+	<bean id="bookingService" class="com.epam.spring.hometask.service.BookingService">
+		<property name="discountService" ref="discountService" />
+		<property name="ticketDesk" ref="ticketDesk"/>
+		<property name="eventService" ref="eventService" />
+		<property name="pricePremiumForHighRating" value="1.2" />
+	</bean>
+	<bean id="ticketDesk" class="com.epam.spring.hometask.console.TicketDesk">
+	</bean>
+	
 	<bean id="auditoriumService" class="com.epam.spring.hometask.service.AuditoriumService">
 		<constructor-arg>
 			<list>
-				<ref bean="auditorium1"/>
-				<ref bean="auditorium2"/>
+				<ref bean="auditorium1" />
+				<ref bean="auditorium2" />
 			</list>
 		</constructor-arg>
 	</bean>
-
-
-
-
-
-
-
 	<bean
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">

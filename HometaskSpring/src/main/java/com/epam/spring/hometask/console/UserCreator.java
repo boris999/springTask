@@ -34,6 +34,7 @@ public class UserCreator {
 				System.out.print("Invalid entry try again. ");
 			}
 		}
+		br.close();
 		User user = new User();
 		user.setBirthday(birthday);
 		user.setEmail(email);
@@ -41,15 +42,5 @@ public class UserCreator {
 		user.setLastName(last);
 		return user;
 	}
-
-	// id
-	//
-	// private String firstName;
-	//
-	// private String lastName;
-	//
-	// private String email;
-	//
-	// private LocalDate birthday;
 
 }
