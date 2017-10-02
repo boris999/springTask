@@ -2,7 +2,6 @@ package com.epam.spring.hometask.console;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -17,10 +16,9 @@ import com.epam.spring.hometask.domain.EventRating;
 
 public class EventCreator {
 
-	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy hh:mm");
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-	public Event createEvent(ApplicationContext context) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	public Event createEvent(ApplicationContext context, BufferedReader br) throws IOException {
 		System.out.println("Enter event name:");
 		String name = br.readLine();
 		double basePrice = 0.0;
@@ -39,7 +37,7 @@ public class EventCreator {
 			System.out.println("Choose event rating  - low, mid or high");
 			String rating = br.readLine();
 			try {
-				eRating = EventRating.valueOf(rating);
+				eRating = EventRating.valueOf(rating.toUpperCase());
 			} catch (IllegalArgumentException e) {
 				System.out.print("Invalid entry try again. ");
 			}
@@ -50,7 +48,7 @@ public class EventCreator {
 		boolean addedAUditoriumAndAirDate = false;
 		do {
 			while (airDateTime == null) {
-				System.out.println("Enter date and time for event in dd.mm.yy hh:mm format:");
+				System.out.println("Enter date and time for event in yyyy-MM-dd HH:mm format:");
 				String dateTime = br.readLine();
 
 				try {
@@ -82,7 +80,6 @@ public class EventCreator {
 		event.setName(name);
 		event.setBasePrice(basePrice);
 		event.setRating(eRating);
-		br.close();
 		return event;
 	}
 

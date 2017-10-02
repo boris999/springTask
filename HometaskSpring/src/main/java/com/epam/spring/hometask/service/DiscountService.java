@@ -29,4 +29,9 @@ public class DiscountService {
 		final LocalDate eventDate = airDate.toLocalDate();
 		return eventDate.minusDays(5).isBefore(birthday) && birthday.plusDays(5).isAfter(eventDate);
 	}
+
+	public void setDiscountStrategies(List<DiscountStrategy> discountStrategies) {
+		this.discountStrategies = discountStrategies;
+	}
+
 }

@@ -15,7 +15,7 @@ public class Auditorium {
 	private String name;
 
 	private long numberOfSeats;
-	
+
 	private double extraPayForVipSeat;
 
 	private Set<Long> vipSeats = Collections.emptySet();
@@ -40,6 +40,14 @@ public class Auditorium {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public double getExtraPayForVipSeat() {
+		return this.extraPayForVipSeat;
+	}
+
+	public void setExtraPayForVipSeat(double extraPayForVipSeat) {
+		this.extraPayForVipSeat = extraPayForVipSeat;
 	}
 
 	public long getNumberOfSeats() {

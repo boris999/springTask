@@ -1,29 +1,26 @@
 package com.epam.spring.hometask.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Optional;
-
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 
 import com.epam.spring.hometask.console.UserCreator;
 import com.epam.spring.hometask.dao.UserDAO;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
-public class UserService implements ApplicationContextAware {
+public class UserService {
 
 	private UserDAO dao;
 	private UserCreator creator;
-	private ApplicationContext context;
 
-	private UserService(UserDAO dao) {
+	private UserService(UserDAO dao, UserCreator creator) {
 		this.dao = dao;
+		this.creator = creator;
 	}
 
-	public void createUser() throws IOException {
-		User user = this.creator.createUser();
+	public void createUser(BufferedReader br) throws IOException {
+		User user = this.creator.createUser(br);
 		synchronized (user) {
 			Optional<Long> lastUserID = this.dao.getAllUsers().stream().map(u -> u.getId()).max((l1, l2) -> (Long.compare(l1, l2)));
 			if (lastUserID.isPresent()) {
@@ -34,21 +31,21 @@ public class UserService implements ApplicationContextAware {
 		}
 		this.dao.saveUser(user);
 	}
-	
-	public void removeUser(User user){
-		dao.removeUser(user);
-	}
-	
-	public User getUserById(long id) throws NotFoundException{
-		return dao.getById(id);
-	}
-	
-	public User getUserByEmail(String email) throws NotFoundException{
-		return dao.getUserByEmail(email);
+
+	public User selectUser(BufferedReader br) throws IOException, NotFoundException {
+		return this.creator.selectUser(this, br);
 	}
 
-	@Override
-	public void setApplicationContext(ApplicationContext context) throws BeansException {
-		this.context = context;
+	public void removeUser(User user) {
+		this.dao.removeUser(user);
 	}
+
+	public User getUserById(long id) throws NotFoundException {
+		return this.dao.getById(id);
+	}
+
+	public User getUserByEmail(String email) throws NotFoundException {
+		return this.dao.getUserByEmail(email);
+	}
+
 }

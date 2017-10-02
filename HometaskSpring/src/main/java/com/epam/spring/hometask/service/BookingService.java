@@ -1,16 +1,14 @@
 package com.epam.spring.hometask.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.epam.spring.hometask.console.ConsolePrinter;
 import com.epam.spring.hometask.console.TicketDesk;
 import com.epam.spring.hometask.domain.Auditorium;
 import com.epam.spring.hometask.domain.Event;
@@ -18,61 +16,52 @@ import com.epam.spring.hometask.domain.EventRating;
 import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
-import com.epam.spring.hometask.service.DiscountService;
 
 public class BookingService {
-	
+
 	private DiscountService discountService;
 	private TicketDesk ticketDesk;
 	private EventService eventService;
-	private int pricePremiumForHighRating;
-	//private ConsolePrinter printer;
-//Event event, LocalDateTime dateTime, are not needed they are in choosenEvent. to make method called with 
-	//Event event, LocalDateTime dateTime, User user, long... seatNumbers from somewhere else with passes args
-	
-	public Map<Set<Ticket>, Double> getTicketsRegularPrice(Event choosenEvent, User user, long... seatNumbers) throws IOException, NotFoundException {
+	private double pricePremiumForHighRating;
+
+	public Map<NavigableSet<Ticket>, Double> getTicketsRegularPrice(Event choosenEvent, User user, long... seatNumbers)
+			throws IOException, NotFoundException {
 		// TODO to check is seat is already booked!
-		double priceBeforeDiscount = getTicketsPriceWithoutDiscount(choosenEvent, eventService, pricePremiumForHighRating, seatNumbers);
-//		int discount = discountService.getDiscount(user, dateTime, seatNumbers.length);
-//		printer.print("Price before discount =>"+String.valueOf(priceBeforeDiscount));
-//		printer.print("Discount is " + String.valueOf(discount) +"%");
-//		double finalPrice = priceBeforeDiscount*(100-discount)/100;
-//		printer.print("Final price is " + String.valueOf(finalPrice));
-		Set<Ticket> requestedTickets = new HashSet<Ticket>();
-		for(long seatNumber :seatNumbers){
-			requestedTickets.add(new Ticket(user, eventService.getById(choosenEvent.getId()), choosenEvent.getAirDates().first(), seatNumber));
+		double priceBeforeDiscount = this.getTicketsPriceWithoutDiscount(choosenEvent, this.eventService, this.pricePremiumForHighRating,
+				seatNumbers);
+		NavigableSet<Ticket> requestedTickets = new TreeSet<>();
+		for (long seatNumber : seatNumbers) {
+			requestedTickets.add(new Ticket(user, this.eventService.getById(choosenEvent.getId()), choosenEvent.getAirDates().first(), seatNumber));
 		}
-		Map<Set<Ticket>, Double> mapToReturn = new HashMap<>();
+		Map<NavigableSet<Ticket>, Double> mapToReturn = new HashMap<>();
 		mapToReturn.put(requestedTickets, priceBeforeDiscount);
 		return mapToReturn;
 	}
 
-	
-	public void bookTicket(NavigableSet<Ticket> tickets){
+	public void bookTicket(NavigableSet<Ticket> tickets) {
 		Ticket firstTicket = tickets.first();
 		User user = firstTicket.getUser();
 		Event event = firstTicket.getEvent();
-		for(Ticket t : tickets){
+		for (Ticket t : tickets) {
 			event.buyTicket(t);
 		}
-		if(user != null){
+		if (user != null) {
 			user.getTickets().addAll(tickets);
 		}
-	} 
-	
-	
-	public Set<Ticket> getPurchasedTicketsForEvent(Event event, LocalDateTime dateTime){
+	}
+
+	public Set<Ticket> getPurchasedTicketsForEvent(Event event, LocalDateTime dateTime) {
 		return event.getAllTickets(dateTime);
 	}
-	
-	public Event selectEvent(EventService eventService) throws IOException{
-		return ticketDesk.chooseEvent(eventService);
+
+	public Event selectEvent(BufferedReader br) throws IOException {
+		return this.ticketDesk.chooseEvent(this.eventService, br);
 	}
-	
+
 	private double getTicketsPriceWithoutDiscount(Event event, EventService eService, double pricePremiumForHighRating, long... seats)
 			throws IOException, NotFoundException {
 		LocalDateTime choosenDateTime = event.getAirDates().first();
-		Event eventInDB = (Event) eService.getById(event.getId());
+		Event eventInDB = eService.getById(event.getId());
 		Auditorium auditorium = eventInDB.getAuditoriums().get(choosenDateTime);
 		Set<Long> vipSeat = auditorium.getVipSeats();
 		double totalPrice = 0.0;
@@ -88,9 +77,17 @@ public class BookingService {
 		}
 		return totalPrice;
 	}
-	
+
+	public long[] selectSeats(BufferedReader br) throws IOException {
+		return this.ticketDesk.selectSeats(br);
+	}
+
+	public int getDiscount(User user, LocalDateTime dateTime, int numberOfSeats) {
+		return this.discountService.getDiscount(user, dateTime, numberOfSeats);
+	}
+
 	public DiscountService getDiscountService() {
-		return discountService;
+		return this.discountService;
 	}
 
 	public void setDiscountService(DiscountService discountService) {
@@ -98,7 +95,7 @@ public class BookingService {
 	}
 
 	public TicketDesk getTicketDesk() {
-		return ticketDesk;
+		return this.ticketDesk;
 	}
 
 	public void setTicketDesk(TicketDesk ticketDesk) {
@@ -106,11 +103,15 @@ public class BookingService {
 	}
 
 	public EventService getEventService() {
-		return eventService;
+		return this.eventService;
 	}
 
 	public void setEventService(EventService eventService) {
 		this.eventService = eventService;
 	}
-	
+
+	public void setPricePremiumForHighRating(double pricePremiumForHighRating) {
+		this.pricePremiumForHighRating = pricePremiumForHighRating;
+	}
+
 }
