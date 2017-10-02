@@ -1,4 +1,4 @@
-package com.epam.spring.hometask.console;
+package com.epam.spring.hometask;
 
 import java.io.BufferedReader;
 import java.io.IOException;
