@@ -2,9 +2,14 @@ package com.epam.spring.hometask.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -21,8 +26,20 @@ public class Event extends DomainObject {
 
 	private EventRating rating;
 
-	private NavigableMap<LocalDateTime, BookedAuditorium> auditoriums = new TreeMap<>();
+	private NavigableMap<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
+	
+	private Map<LocalDateTime, Set<Ticket>> eventTickets = new HashMap<>();
 
+	
+	public void buyTicket(Ticket ticket){
+		eventTickets.get(ticket.getDateTime()).add(ticket);
+	}
+	
+	public Set<Ticket> getAllTickets(LocalDateTime dateTime){
+		return Collections.unmodifiableSet(eventTickets.get(dateTime));
+	}
+	
+	
 	/**
 	 * Checks if event is aired on particular <code>dateTime</code> and assigns auditorium to it.
 	 *
@@ -35,33 +52,36 @@ public class Event extends DomainObject {
 	public boolean assignAuditorium(LocalDateTime dateTime, Auditorium auditorium) {
 		if (this.airDates.contains(dateTime)) {
 			this.auditoriums.put(dateTime, auditorium);
+			eventTickets.put(dateTime, new HashSet<Ticket>());
 			return true;
 		} else {
 			return false;
 		}
 	}
 
-	/**
-	 * Removes auditorium assignment from event
-	 *
-	 * @param dateTime
-	 *            Date and time to remove auditorium for
-	 * @return <code>true</code> if successful, <code>false</code> if not removed
-	 */
-	public boolean removeAuditoriumAssignment(LocalDateTime dateTime) {
-		return this.auditoriums.remove(dateTime) != null;
-	}
-
-	/**
-	 * Add date and time of event air
-	 *
-	 * @param dateTime
-	 *            Date and time to add
-	 * @return <code>true</code> if successful, <code>false</code> if already there
-	 */
-	public boolean addAirDateTime(LocalDateTime dateTime) {
-		return this.airDates.add(dateTime);
-	}
+//	/**
+//	 * Removes auditorium assignment from event
+//	 *
+//	 * @param dateTime
+//	 *            Date and time to remove auditorium for
+//	 * @return <code>true</code> if successful, <code>false</code> if not removed
+//	 */
+//	public boolean removeAuditoriumAssignment(LocalDateTime dateTime) {
+//		Auditorium auditorium = this.auditoriums.get(dateTime);
+//		eventTickets.remove(new Pair(dateTime, auditorium));
+//		return this.auditoriums.remove(dateTime) != null;
+//	}
+//
+//	/**
+//	 * Add date and time of event air
+//	 *
+//	 * @param dateTime
+//	 *            Date and time to add
+//	 * @return <code>true</code> if successful, <code>false</code> if already there
+//	 */
+//	public boolean addAirDateTime(LocalDateTime dateTime) {
+//		return this.airDates.add(dateTime);
+//	}
 
 	/**
 	 * Adding date and time of event air and assigning auditorium to that
@@ -76,6 +96,7 @@ public class Event extends DomainObject {
 		boolean result = this.airDates.add(dateTime);
 		if (result) {
 			this.auditoriums.put(dateTime, auditorium);
+			eventTickets.put(dateTime, new HashSet<Ticket>());
 		}
 		return result;
 	}
@@ -90,7 +111,9 @@ public class Event extends DomainObject {
 	public boolean removeAirDateTime(LocalDateTime dateTime) {
 		boolean result = this.airDates.remove(dateTime);
 		if (result) {
+			eventTickets.remove(dateTime);
 			this.auditoriums.remove(dateTime);
+			
 		}
 		return result;
 	}
@@ -211,4 +234,10 @@ public class Event extends DomainObject {
 
 	}
 
+	@Override
+	public String toString() {
+		return " " + name + " ";
+	}
+
+	
 }

@@ -6,51 +6,32 @@ import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 import com.epam.spring.hometask.dao.EventDAO;
+import com.epam.spring.hometask.domain.Auditorium;
 import com.epam.spring.hometask.domain.Event;
+import com.epam.spring.hometask.domain.EventRating;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
-import com.epam.spring.hometask.service.DiscountService;
+import com.epam.spring.hometask.service.EventService;
+
 
 public class TicketDesk {
-
-	public double getTicketsPrice(EventDAO dao, User user, DiscountService discountService, int... seats)
-			throws IOException, NotFoundException {
-		Event choosenEvent = this.chooseEvent(dao);
-		LocalDateTime choosenDateTime = choosenEvent.getAirDates().first();
-		int numberOfTickets = seats.length;
-		int discount = discountService.getDiscount(user, choosenDateTime, numberOfTickets);
-		Event eventInDB = (Event) dao.getById(choosenEvent.getId());
-
-		return 0.0;
-	}
-	// getTicketsPrice(event, dateTime, user, seats, DiscountService discount) - returns total price for buying all tickets for specified event on
-	// specific date and time for
-	// specified seats
 
 	// DUMMY implementation have to change model to check seatsAvailability
 	private boolean checkSeatsAvailability(EventDAO dao, Event event, int... seats) throws NotFoundException {
 		return true;
 	}
 
-	private Event chooseEvent(EventDAO dao) throws IOException {
-		List<Event> eventsList = new ArrayList<>(dao.getAllEvents());
-		if (eventsList.isEmpty()) {
-			System.out.println("There ae no events yet. Come back later.");
-			return null;
-		}
+	public Event chooseEvent(EventService service) throws IOException {
+		List<Event> eventsList = new ArrayList<>(service.getAll());
 		List<List<LocalDateTime>> allEventsAirTime = new ArrayList<>();
 		int count = 1;
-		for (int i = 0; i < eventsList.size(); i++) {
-			Event curentEvent = eventsList.get(i);
-			ArrayList<LocalDateTime> arrayList = new ArrayList<>(curentEvent.getAirDates());
-			allEventsAirTime.add(arrayList);
-			for (int j = 0; j < arrayList.size(); j++) {
-
-				System.out.println(count++ + " " + curentEvent + " " + arrayList.get(j));
-			}
+		count = printEvents(eventsList, allEventsAirTime, count);
+		if(count == 1){
+			return null;
 		}
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String eventNumber = null;
@@ -76,6 +57,25 @@ public class TicketDesk {
 		setWithSingleDate.add(customerChoosenDateTime);
 		copyEvent.setAirDates(setWithSingleDate);
 		return copyEvent;
+	}
+
+	private int printEvents(List<Event> eventsList, List<List<LocalDateTime>> allEventsAirTime, int count) {
+		if (eventsList.isEmpty()) {
+			System.out.println("There are no events yet. Come back later.");
+			return 1;
+		}
+		for (int i = 0; i < eventsList.size(); i++) {
+			Event curentEvent = eventsList.get(i);
+			ArrayList<LocalDateTime> arrayList = new ArrayList<>(curentEvent.getAirDates());
+			if(allEventsAirTime != null){
+				allEventsAirTime.add(arrayList);
+			}
+			for (int j = 0; j < arrayList.size(); j++) {
+
+				System.out.println(count++ + " " + curentEvent + " " + arrayList.get(j));
+			}
+		}
+		return count;
 	}
 
 	private LocalDateTime getChoosenEvent(List<List<LocalDateTime>> eventTimes, int customerChoise, List<Event> eventsToChooseFrom,

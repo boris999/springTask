@@ -8,7 +8,12 @@ import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public class UserDAO extends DomainObjectDAO {
-	// TODO getById to return casted from here
+
+	public User getById(long id) throws NotFoundException{
+		return (User) super.getById(id);
+	}
+	
+	
 	public void saveUser(User user) {
 		this.saveDomainObject(user);
 	}
