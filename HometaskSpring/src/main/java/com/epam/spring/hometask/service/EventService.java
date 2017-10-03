@@ -13,12 +13,13 @@ import org.springframework.context.ApplicationContextAware;
 
 import com.epam.spring.hometask.console.EventCreator;
 import com.epam.spring.hometask.dao.EventDAO;
+import com.epam.spring.hometask.dao.IEventDAO;
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
-public class EventService implements ApplicationContextAware {
+public class EventService implements ApplicationContextAware, IEventService {
 
-	private EventDAO dao;
+	private IEventDAO dao;
 	private EventCreator creator;
 	private ApplicationContext context;
 
@@ -27,6 +28,7 @@ public class EventService implements ApplicationContextAware {
 		this.creator = creator;
 	}
 
+	@Override
 	public void createEvent(BufferedReader br) throws IOException {
 		Event event = this.creator.createEvent(this.context, br);
 		synchronized (event) {
@@ -40,6 +42,7 @@ public class EventService implements ApplicationContextAware {
 		this.dao.saveEvent(event);
 	}
 
+	@Override
 	public Set<Event> getEventsForDateRange(LocalDateTime from, LocalDateTime to) {
 		if ((from == null) && (to == null)) {
 			return this.dao.getAllEvents();
@@ -56,26 +59,32 @@ public class EventService implements ApplicationContextAware {
 		return after;
 	}
 
+	@Override
 	public Set<Event> getNextEvents(LocalDateTime to) {
 		return this.getEventsForDateRange(LocalDateTime.now(), to);
 	}
 
+	@Override
 	public void saveEvent(Event event) {
 		this.dao.saveEvent(event);
 	}
 
+	@Override
 	public void removeEvent(Event event) {
 		this.dao.removeEvent(event);
 	}
 
+	@Override
 	public Event getById(long id) throws NotFoundException {
 		return this.dao.getById(id);
 	}
 
+	@Override
 	public Event getByName(String name) throws NotFoundException {
 		return this.dao.getEventByName(name);
 	}
 
+	@Override
 	public Set<Event> getAll() {
 		return this.dao.getAllEvents();
 	}

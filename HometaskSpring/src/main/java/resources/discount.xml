@@ -5,27 +5,30 @@
 http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 
-		
-		<bean id="discountStrategy" class="com.epam.spring.hometask.service.DiscountStrategy" abstract="true">
-			<property name="birthdayDiscount" value="5" />
-			<property name="volumeDiscount" value="50" />
-			<property name="numberOfTicketsTogetVolumeDiscount" value="10" />
-		</bean>
-		<bean id="discountStrategyBirthDay" class="com.epam.spring.hometask.service.DiscountStrategy" parent="discountStrategy">
-			<property name="birthday" value="true" />
-		</bean>
-		<bean id="discountStrategyVolume" class="com.epam.spring.hometask.service.DiscountStrategy" parent="discountStrategy">
-			<property name="birthday" value="false" />
-		</bean>
-		<bean id="discountService" class="com.epam.spring.hometask.service.DiscountService"
-			depends-on="discountStrategyBirthDay, discountStrategyVolume">
-			<property name="discountStrategies">
-				<list>
-					<ref bean="discountStrategyBirthDay" />
-					<ref bean="discountStrategyVolume" />
-				</list>
-			</property>
-		</bean>
+
+	<bean id="discountStrategy" class="com.epam.spring.hometask.service.DiscountStrategy"
+		abstract="true">
+		<property name="birthdayDiscount" value="5" />
+		<property name="volumeDiscount" value="50" />
+		<property name="numberOfTicketsTogetVolumeDiscount" value="10" />
+	</bean>
+	<bean id="discountStrategyBirthDay" class="com.epam.spring.hometask.service.DiscountStrategy"
+		parent="discountStrategy">
+		<property name="birthday" value="true" />
+	</bean>
+	<bean id="discountStrategyVolume" class="com.epam.spring.hometask.service.DiscountStrategy"
+		parent="discountStrategy">
+		<property name="birthday" value="false" />
+	</bean>
+	<bean id="discountService" class="com.epam.spring.hometask.service.DiscountService"
+		depends-on="discountStrategyBirthDay, discountStrategyVolume">
+		<property name="discountStrategies">
+			<list>
+				<ref bean="discountStrategyBirthDay" />
+				<ref bean="discountStrategyVolume" />
+			</list>
+		</property>
+	</bean>
 
 
-	</beans>
+</beans>

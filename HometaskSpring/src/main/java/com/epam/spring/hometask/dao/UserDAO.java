@@ -7,21 +7,24 @@ import java.util.stream.Collectors;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
-public class UserDAO extends DomainObjectDAO {
+public class UserDAO extends DomainObjectDAO implements IUserDAO {
 
-	public User getById(long id) throws NotFoundException{
+	@Override
+	public User getById(long id) throws NotFoundException {
 		return (User) super.getById(id);
 	}
-	
-	
+
+	@Override
 	public void saveUser(User user) {
 		this.saveDomainObject(user);
 	}
 
+	@Override
 	public void removeUser(User user) {
 		this.removeDomainObject(user);
 	}
 
+	@Override
 	public User getUserByEmail(String email) throws NotFoundException {
 		final Optional<User> user = this.getAllUsers().stream()
 				.filter(u -> u.getEmail().equals(email))
@@ -33,6 +36,7 @@ public class UserDAO extends DomainObjectDAO {
 		}
 	}
 
+	@Override
 	public Set<User> getAllUsers() {
 		return this.getAllOfSameType(User.class).stream()
 				.map(dom -> (User) dom).collect(Collectors.toSet());

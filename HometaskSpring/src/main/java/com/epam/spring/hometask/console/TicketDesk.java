@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import com.epam.spring.hometask.domain.Event;
-import com.epam.spring.hometask.service.EventService;
+import com.epam.spring.hometask.service.IEventService;
 
 public class TicketDesk {
 
@@ -17,8 +17,8 @@ public class TicketDesk {
 	// return true;
 	// }
 
-	public Event chooseEvent(EventService service, BufferedReader br) throws IOException {
-		List<Event> eventsList = new ArrayList<>(service.getAll());
+	public Event chooseEvent(IEventService eventService, BufferedReader br) throws IOException {
+		List<Event> eventsList = new ArrayList<>(eventService.getAll());
 		List<List<LocalDateTime>> allEventsAirTime = new ArrayList<>();
 		int count = 1;
 		count = this.printEvents(eventsList, allEventsAirTime, count);

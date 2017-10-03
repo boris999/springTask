@@ -17,21 +17,24 @@ import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 import com.epam.spring.hometask.service.BookingService;
 import com.epam.spring.hometask.service.EventService;
+import com.epam.spring.hometask.service.IBookingService;
+import com.epam.spring.hometask.service.IEventService;
+import com.epam.spring.hometask.service.IUserService;
 import com.epam.spring.hometask.service.UserService;
 
 public class Theater {
 
 	public static void main(String[] args) throws IOException, NotFoundException {
 		ApplicationContext ctx = new ClassPathXmlApplicationContext("resources/spring.xml");
-		BookingService bService = ctx.getBean("bookingService", BookingService.class);
-		EventService eService = ctx.getBean("eventService", EventService.class);
-		UserService uService = ctx.getBean("userService", UserService.class);
+		IBookingService bService = ctx.getBean("bookingService", BookingService.class);
+		IEventService eService = ctx.getBean("eventService", EventService.class);
+		IUserService uService = ctx.getBean("userService", UserService.class);
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		runTheater(bService, eService, uService, br);
 		((ConfigurableApplicationContext) ctx).close();
 	}
 
-	private static void runTheater(BookingService bService, EventService eService, UserService uService, BufferedReader br)
+	private static void runTheater(IBookingService bService, IEventService eService, IUserService uService, BufferedReader br)
 			throws IOException, NotFoundException {
 		while (true) {
 			System.out.println("Enter 'A' for admin menu or anything for user menu");
@@ -44,7 +47,7 @@ public class Theater {
 					System.out.println("Event saved");
 				}
 				if (choise.equalsIgnoreCase("T")) {
-					Event event = bService.selectEvent(br);
+					Event event = bService.selectEvent(eService, br);
 					if (event != null) {
 						Set<Ticket> tickets = bService.getPurchasedTicketsForEvent(event, event.getAirDates().first());
 						for (Ticket t : tickets) {
@@ -61,7 +64,7 @@ public class Theater {
 					System.out.println("User saved");
 				}
 				if (choise.equalsIgnoreCase("V")) {
-					Event event = bService.selectEvent(br);
+					Event event = bService.selectEvent(eService, br);
 					if (event == null) {
 						continue;
 					}
@@ -70,7 +73,7 @@ public class Theater {
 					if (choise.equalsIgnoreCase("Y")) {
 						long[] seatArray = bService.selectSeats(br);
 						User user = uService.selectUser(br);
-						Map<NavigableSet<Ticket>, Double> ticketsWithRegularPrce = bService.getTicketsRegularPrice(event, user, seatArray);
+						Map<NavigableSet<Ticket>, Double> ticketsWithRegularPrce = bService.getTicketsRegularPrice(eService, event, user, seatArray);
 						NavigableSet<Ticket> tickets = ticketsWithRegularPrce.keySet().stream().findFirst().get();
 						double price = ticketsWithRegularPrce.get(tickets);
 						int discountPersantage = bService.getDiscount(user, event.getAirDates().first(), seatArray.length);

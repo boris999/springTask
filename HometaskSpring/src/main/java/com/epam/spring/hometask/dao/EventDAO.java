@@ -1,6 +1,5 @@
 package com.epam.spring.hometask.dao;
 
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -8,16 +7,19 @@ import java.util.stream.Collectors;
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
-public class EventDAO extends DomainObjectDAO {
+public class EventDAO extends DomainObjectDAO implements IEventDAO {
 
+	@Override
 	public void saveEvent(Event event) {
 		this.saveDomainObject(event);
 	}
 
+	@Override
 	public void removeEvent(Event event) {
 		this.removeDomainObject(event);
 	}
 
+	@Override
 	public Event getEventByName(String name) throws NotFoundException {
 		final Optional<Event> event = this.getAllEvents().stream()
 				.filter(e -> e.getName().equals(name))
@@ -29,12 +31,14 @@ public class EventDAO extends DomainObjectDAO {
 		}
 	}
 
+	@Override
 	public Set<Event> getAllEvents() {
 		return this.getAllOfSameType(Event.class).stream()
 				.map(dom -> (Event) dom).collect(Collectors.toSet());
 	}
 
-	public Event getById(long id) throws NotFoundException{
-		return (Event)super.getById(id);
+	@Override
+	public Event getById(long id) throws NotFoundException {
+		return (Event) super.getById(id);
 	}
 }

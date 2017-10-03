@@ -17,27 +17,28 @@ import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
-public class BookingService {
+public class BookingService implements IBookingService {
 
-	private DiscountService discountService;
+	private IDiscountService discountService;
 	private TicketDesk ticketDesk;
-	private EventService eventService;
 	private double pricePremiumForHighRating;
 
-	public Map<NavigableSet<Ticket>, Double> getTicketsRegularPrice(Event choosenEvent, User user, long... seatNumbers)
+	@Override
+	public Map<NavigableSet<Ticket>, Double> getTicketsRegularPrice(IEventService eventService, Event choosenEvent, User user, long... seatNumbers)
 			throws IOException, NotFoundException {
 		// TODO to check is seat is already booked!
-		double priceBeforeDiscount = this.getTicketsPriceWithoutDiscount(choosenEvent, this.eventService, this.pricePremiumForHighRating,
+		double priceBeforeDiscount = this.getTicketsPriceWithoutDiscount(choosenEvent, eventService, this.pricePremiumForHighRating,
 				seatNumbers);
 		NavigableSet<Ticket> requestedTickets = new TreeSet<>();
 		for (long seatNumber : seatNumbers) {
-			requestedTickets.add(new Ticket(user, this.eventService.getById(choosenEvent.getId()), choosenEvent.getAirDates().first(), seatNumber));
+			requestedTickets.add(new Ticket(user, eventService.getById(choosenEvent.getId()), choosenEvent.getAirDates().first(), seatNumber));
 		}
 		Map<NavigableSet<Ticket>, Double> mapToReturn = new HashMap<>();
 		mapToReturn.put(requestedTickets, priceBeforeDiscount);
 		return mapToReturn;
 	}
 
+	@Override
 	public void bookTicket(NavigableSet<Ticket> tickets) {
 		Ticket firstTicket = tickets.first();
 		User user = firstTicket.getUser();
@@ -50,18 +51,30 @@ public class BookingService {
 		}
 	}
 
+	@Override
 	public Set<Ticket> getPurchasedTicketsForEvent(Event event, LocalDateTime dateTime) {
 		return event.getAllTickets(dateTime);
 	}
 
-	public Event selectEvent(BufferedReader br) throws IOException {
-		return this.ticketDesk.chooseEvent(this.eventService, br);
+	@Override
+	public Event selectEvent(IEventService eventService, BufferedReader br) throws IOException {
+		return this.ticketDesk.chooseEvent(eventService, br);
 	}
 
-	private double getTicketsPriceWithoutDiscount(Event event, EventService eService, double pricePremiumForHighRating, long... seats)
+	@Override
+	public long[] selectSeats(BufferedReader br) throws IOException {
+		return this.ticketDesk.selectSeats(br);
+	}
+
+	@Override
+	public int getDiscount(User user, LocalDateTime dateTime, int numberOfSeats) {
+		return this.discountService.getDiscount(user, dateTime, numberOfSeats);
+	}
+
+	private double getTicketsPriceWithoutDiscount(Event event, IEventService eventService2, double pricePremiumForHighRating, long... seats)
 			throws IOException, NotFoundException {
 		LocalDateTime choosenDateTime = event.getAirDates().first();
-		Event eventInDB = eService.getById(event.getId());
+		Event eventInDB = eventService2.getById(event.getId());
 		Auditorium auditorium = eventInDB.getAuditoriums().get(choosenDateTime);
 		Set<Long> vipSeat = auditorium.getVipSeats();
 		double totalPrice = 0.0;
@@ -78,36 +91,12 @@ public class BookingService {
 		return totalPrice;
 	}
 
-	public long[] selectSeats(BufferedReader br) throws IOException {
-		return this.ticketDesk.selectSeats(br);
-	}
-
-	public int getDiscount(User user, LocalDateTime dateTime, int numberOfSeats) {
-		return this.discountService.getDiscount(user, dateTime, numberOfSeats);
-	}
-
-	public DiscountService getDiscountService() {
-		return this.discountService;
-	}
-
 	public void setDiscountService(DiscountService discountService) {
 		this.discountService = discountService;
 	}
 
-	public TicketDesk getTicketDesk() {
-		return this.ticketDesk;
-	}
-
 	public void setTicketDesk(TicketDesk ticketDesk) {
 		this.ticketDesk = ticketDesk;
-	}
-
-	public EventService getEventService() {
-		return this.eventService;
-	}
-
-	public void setEventService(EventService eventService) {
-		this.eventService = eventService;
 	}
 
 	public void setPricePremiumForHighRating(double pricePremiumForHighRating) {

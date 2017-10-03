@@ -8,7 +8,7 @@ import java.time.format.DateTimeParseException;
 
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
-import com.epam.spring.hometask.service.UserService;
+import com.epam.spring.hometask.service.IUserService;
 
 public class UserCreator {
 
@@ -42,7 +42,7 @@ public class UserCreator {
 		return user;
 	}
 
-	public User selectUser(UserService uService, BufferedReader br) throws IOException, NotFoundException {
+	public User selectUser(IUserService uService, BufferedReader br) throws IOException, NotFoundException {
 		User user = null;
 		while (user == null) {
 			System.out.println("Enter user id if registered or 'A' to continue as anonymous user");

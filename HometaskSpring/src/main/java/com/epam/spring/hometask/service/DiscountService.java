@@ -6,10 +6,11 @@ import java.util.List;
 
 import com.epam.spring.hometask.domain.User;
 
-public class DiscountService {
+public class DiscountService implements IDiscountService {
 
 	private List<DiscountStrategy> discountStrategies;
 
+	@Override
 	public int getDiscount(User user, LocalDateTime dateTime, int numberOfTickets) {
 		int maxDiscount = 0;
 		for (DiscountStrategy ds : this.discountStrategies) {
@@ -24,14 +25,14 @@ public class DiscountService {
 		return maxDiscount;
 	}
 
+	@Override
+	public void setDiscountStrategies(List<DiscountStrategy> discountStrategies) {
+		this.discountStrategies = discountStrategies;
+	}
+
 	private boolean eligibleForBirthdayDiscount(User user, LocalDateTime airDate) {
 		final LocalDate birthday = user.getBirthday();
 		final LocalDate eventDate = airDate.toLocalDate();
 		return eventDate.minusDays(5).isBefore(birthday) && birthday.plusDays(5).isAfter(eventDate);
 	}
-
-	public void setDiscountStrategies(List<DiscountStrategy> discountStrategies) {
-		this.discountStrategies = discountStrategies;
-	}
-
 }
