@@ -15,7 +15,7 @@ public class UserService implements IUserService {
 	private IUserDAO dao;
 	private UserCreator creator;
 
-	private UserService(UserDAO dao, UserCreator creator) {
+	public UserService(UserDAO dao, UserCreator creator) {
 		this.dao = dao;
 		this.creator = creator;
 	}
