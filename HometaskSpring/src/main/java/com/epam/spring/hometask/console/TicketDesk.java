@@ -7,9 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.springframework.stereotype.Component;
+
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.service.IEventService;
 
+@Component
 public class TicketDesk {
 
 	// DUMMY implementation have to change model to check seatsAvailability

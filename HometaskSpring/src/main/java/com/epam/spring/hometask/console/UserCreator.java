@@ -6,10 +6,13 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+import org.springframework.stereotype.Component;
+
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 import com.epam.spring.hometask.service.IUserService;
 
+@Component
 public class UserCreator {
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
@@ -22,10 +25,9 @@ public class UserCreator {
 		System.out.println("Enter user e-mail:");
 		String email = br.readLine();
 		System.out.println("Enter user birthday. Use the format dd.MM.yy");
-		String bDay = br.readLine();
 		LocalDate birthday = null;
 		while (birthday == null) {
-			System.out.println("Enter date and time for event in dd.mm.yy format:");
+			System.out.println("Enter user birthday in dd.mm.yy format:");
 			String dateTime = br.readLine();
 
 			try {

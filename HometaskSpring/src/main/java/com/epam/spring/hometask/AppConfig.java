@@ -5,7 +5,9 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
@@ -25,6 +27,8 @@ import com.epam.spring.hometask.service.UserService;
 @PropertySources({
 	@PropertySource("resources/auditorium.properties"), @PropertySource("resources/other.properties")
 })
+@ComponentScan("com.epam.spring.hometask.*")
+@EnableAspectJAutoProxy
 public class AppConfig {
 
 	@Autowired
@@ -98,33 +102,8 @@ public class AppConfig {
 	}
 
 	@Bean
-	public UserDAO getUserDAO(){
-		return new UserDAO();
-	};
-	
-	@Bean
-	public UserCreator getUserCreator(){
-		return new UserCreator();
-	};
-	
-	@Bean
-	public EventDAO getEventDAO(){
-		return new EventDAO();
-	};
-	
-	@Bean
-	public EventCreator getEventCreator(){
-		return new EventCreator();
-	};
-	
-	@Bean
 	public DiscountService getDiscountService(){
 		return new DiscountService();
 	};
 	
-	@Bean
-	public TicketDesk getTicketDesk(){
-		return new TicketDesk();
-	};
-
 }

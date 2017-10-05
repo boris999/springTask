@@ -4,9 +4,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
+@Component
 public class UserDAO extends DomainObjectDAO implements IUserDAO {
 
 	@Override

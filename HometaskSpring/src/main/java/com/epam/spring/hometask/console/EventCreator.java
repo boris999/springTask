@@ -9,11 +9,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 import com.epam.spring.hometask.domain.Auditorium;
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.domain.EventRating;
 
+@Component
 public class EventCreator {
 
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
