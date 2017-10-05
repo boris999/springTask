@@ -11,7 +11,12 @@ public class DiscountStrategy {
 		if (this.birthday) {
 			return this.birthdayDiscount;
 		} else {
-			return ((numberOfTickets / this.numberOfTicketsTogetVolumeDiscount) * this.volumeDiscount) / numberOfTickets;
+			if (numberOfTickets >= numberOfTicketsTogetVolumeDiscount) {
+				return ((numberOfTickets / this.numberOfTicketsTogetVolumeDiscount) * this.volumeDiscount)
+						/ numberOfTickets;
+			} else {
+				return 0;
+			}
 		}
 	}
 
@@ -34,7 +39,7 @@ public class DiscountStrategy {
 	public boolean isBirthday() {
 		return this.birthday;
 	}
-
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;

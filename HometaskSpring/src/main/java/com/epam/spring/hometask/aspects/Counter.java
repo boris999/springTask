@@ -24,7 +24,7 @@ public class Counter {
 	@Autowired
 	Environment env;
 	
-	@After("allEventMethods() && allEventMethods()")
+	@After("allEventMethods() && allGetNameMethods()")
 	public void countgetName(JoinPoint joinPoint){
 		incrementCount(env.getProperty("eventGetName"), joinPoint);
 	}
@@ -39,10 +39,10 @@ public class Counter {
 		incrementCount(env.getProperty("eventBuyTicket"), joinPoint);
 	}
 
-	@Pointcut("execution(* * com.epam.spring.hometask.domain.Event.*)")
+	@Pointcut("execution(* com.epam.spring.hometask.domain.Event.*())")
 	private void allEventMethods() {}
 	
-	@Pointcut("execution(* String *.getName())")
+	@Pointcut("execution(String getName())")
 	private void allGetNameMethods() {}
 	
 	@Pointcut("execution(public double com.epam.spring.hometask.domain.Event.getBasePrice())")

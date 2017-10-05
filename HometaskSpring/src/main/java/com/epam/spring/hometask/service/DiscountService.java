@@ -14,7 +14,7 @@ public class DiscountService implements IDiscountService {
 	public int getDiscount(User user, LocalDateTime dateTime, int numberOfTickets) {
 		int maxDiscount = 0;
 		for (DiscountStrategy ds : this.discountStrategies) {
-			if ((user == null) || (ds.isBirthday() && !this.eligibleForBirthdayDiscount(user, dateTime))) {
+			if (ds.isBirthday() && !this.eligibleForBirthdayDiscount(user, dateTime)) {
 				continue;
 			}
 			int calculatetedDiscount = ds.calculateDiscount(numberOfTickets);
@@ -31,8 +31,17 @@ public class DiscountService implements IDiscountService {
 	}
 
 	private boolean eligibleForBirthdayDiscount(User user, LocalDateTime airDate) {
+		if(user == null){
+			return false;
+		}
 		final LocalDate birthday = user.getBirthday();
 		final LocalDate eventDate = airDate.toLocalDate();
 		return eventDate.minusDays(5).isBefore(birthday) && birthday.plusDays(5).isAfter(eventDate);
 	}
+
+	public List<DiscountStrategy> getDiscountStrategies() {
+		return discountStrategies;
+	}
+	
+	
 }
