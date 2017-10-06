@@ -24,31 +24,25 @@ public class BookingService implements IBookingService {
 	private double pricePremiumForHighRating;
 
 	@Override
-	public Map<NavigableSet<Ticket>, Double> getTicketsRegularPrice(IEventService eventService, Event choosenEvent, User user, long... seatNumbers)
+	public NavigableSet<Ticket> getTicketsRegularPrice(IEventService eventService, Event choosenEvent, User user, long... seatNumbers)
 			throws IOException, NotFoundException {
-		// TODO to check is seat is already booked!
-		double priceBeforeDiscount = this.getTicketsPriceWithoutDiscount(choosenEvent, eventService, this.pricePremiumForHighRating,
-				seatNumbers);
+		// TODO to check is seat is already booked! From all tickets stream+filter
 		NavigableSet<Ticket> requestedTickets = new TreeSet<>();
 		for (long seatNumber : seatNumbers) {
-			requestedTickets.add(new Ticket(user, eventService.getById(choosenEvent.getId()), choosenEvent.getAirDates().first(), seatNumber));
-		}
-		Map<NavigableSet<Ticket>, Double> mapToReturn = new HashMap<>();
-		mapToReturn.put(requestedTickets, priceBeforeDiscount);
-		return mapToReturn;
-	}
-
-	@Override
-	public void bookTicket(NavigableSet<Ticket> tickets) {
-		Ticket firstTicket = tickets.first();
-		User user = firstTicket.getUser();
-		Event event = firstTicket.getEvent();
-		for (Ticket t : tickets) {
-			event.buyTicket(t);
+			bookTicket(eventService, choosenEvent, user, requestedTickets, seatNumber);
 		}
 		if (user != null) {
-			user.getTickets().addAll(tickets);
+			user.getTickets().addAll(requestedTickets);
 		}
+		return requestedTickets;
+	}
+
+	private void bookTicket(IEventService eventService, Event choosenEvent, User user,
+			NavigableSet<Ticket> requestedTickets, long seatNumber) throws IOException, NotFoundException {
+		double currentTicketPrice = calculateTicketRegularPrice(choosenEvent, eventService, pricePremiumForHighRating, seatNumber);
+		Ticket currentTicket = new Ticket(user, choosenEvent, choosenEvent.getAirDates().first(), seatNumber, currentTicketPrice);
+		requestedTickets.add(currentTicket);
+		choosenEvent.buyTicket(currentTicket);
 	}
 
 	@Override
@@ -67,28 +61,26 @@ public class BookingService implements IBookingService {
 	}
 
 	@Override
-	public int getDiscount(User user, LocalDateTime dateTime, int numberOfSeats) {
-		return this.discountService.getDiscount(user, dateTime, numberOfSeats);
+	public int getDiscount(NavigableSet<Ticket> tickets) {
+		return this.discountService.getDiscount(tickets);
 	}
-
-	private double getTicketsPriceWithoutDiscount(Event event, IEventService eventService2, double pricePremiumForHighRating, long... seats)
+	
+	public double calculateTicketRegularPrice(Event event, IEventService eventService, double pricePremiumForHighRating, long seatNumber)
 			throws IOException, NotFoundException {
 		LocalDateTime choosenDateTime = event.getAirDates().first();
-		Event eventInDB = eventService2.getById(event.getId());
+		Event eventInDB = eventService.getById(event.getId());
 		Auditorium auditorium = eventInDB.getAuditoriums().get(choosenDateTime);
 		Set<Long> vipSeat = auditorium.getVipSeats();
-		double totalPrice = 0.0;
+		double price = 0.0;
 		boolean isHighRated = eventInDB.getRating().equals(EventRating.HIGH);
-		double basePrice = isHighRated ? eventInDB.getBasePrice() * pricePremiumForHighRating
+		double priceForRating = isHighRated ? eventInDB.getBasePrice() * pricePremiumForHighRating
 				: eventInDB.getBasePrice();
-		for (long seatNumber : seats) {
 			if (vipSeat.contains(seatNumber)) {
-				totalPrice += basePrice;
+				price += priceForRating*auditorium.getExtraPayForVipSeat();
 			} else {
-				totalPrice += basePrice;
+				price += priceForRating;
 			}
-		}
-		return totalPrice;
+		return price;
 	}
 
 	public void setDiscountService(DiscountService discountService) {

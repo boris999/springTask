@@ -20,6 +20,15 @@ public class User extends DomainObject {
 
 	private NavigableSet<Ticket> tickets = new TreeSet<>();
 
+	
+	public boolean isLucky() {
+		if (this.firstName.equalsIgnoreCase("boris")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public String getFirstName() {
 		return this.firstName;
 	}

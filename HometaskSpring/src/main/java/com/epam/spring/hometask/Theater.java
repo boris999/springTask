@@ -10,6 +10,7 @@ import java.util.Set;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.epam.spring.hometask.domain.Event;
@@ -23,11 +24,13 @@ import com.epam.spring.hometask.service.IEventService;
 import com.epam.spring.hometask.service.IUserService;
 import com.epam.spring.hometask.service.UserService;
 
+@PropertySource("resources/other.properties")
 public class Theater {
 
 	public static void main(String[] args) throws IOException, NotFoundException {
-		ApplicationContext ctx = new AnnotationConfigApplicationContext (AppConfig.class, DiscountConfig.class);
-				//new ClassPathXmlApplicationContext("resources/spring.xml");
+		ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class, DiscountConfig.class);
+		// new ClassPathXmlApplicationContext("resources/spring.xml");
+		// TODO bean names to property file?
 		IBookingService bService = ctx.getBean("bookingService", BookingService.class);
 		IEventService eService = ctx.getBean("eventService", EventService.class);
 		IUserService uService = ctx.getBean("userService", UserService.class);
@@ -36,8 +39,8 @@ public class Theater {
 		((ConfigurableApplicationContext) ctx).close();
 	}
 
-	private static void runTheater(IBookingService bService, IEventService eService, IUserService uService, BufferedReader br)
-			throws IOException, NotFoundException {
+	private static void runTheater(IBookingService bService, IEventService eService, IUserService uService,
+			BufferedReader br) throws IOException, NotFoundException {
 		while (true) {
 			System.out.println("Enter 'A' for admin menu or anything for user menu");
 			String choise = br.readLine();
@@ -52,6 +55,9 @@ public class Theater {
 					Event event = bService.selectEvent(eService, br);
 					if (event != null) {
 						Set<Ticket> tickets = bService.getPurchasedTicketsForEvent(event, event.getAirDates().first());
+						if (tickets.isEmpty()) {
+							System.out.println("No tickets sold yet.");
+						}
 						for (Ticket t : tickets) {
 							System.out.println(t);
 						}
@@ -70,31 +76,26 @@ public class Theater {
 					if (event == null) {
 						continue;
 					}
-					System.out.println("Do you want to get the price for tickets for this event? Enter Y to confirm or any key to cancel:");
+					System.out.println(
+							"Do you want to buy tickets for this event? Enter Y to confirm or any key to cancel:");
 					choise = br.readLine();
 					if (choise.equalsIgnoreCase("Y")) {
 						long[] seatArray = bService.selectSeats(br);
 						User user = uService.selectUser(br);
-						Map<NavigableSet<Ticket>, Double> ticketsWithRegularPrce = bService.getTicketsRegularPrice(eService, event, user, seatArray);
-						NavigableSet<Ticket> tickets = ticketsWithRegularPrce.keySet().stream().findFirst().get();
-						double price = ticketsWithRegularPrce.get(tickets);
-						int discountPersantage = bService.getDiscount(user, event.getAirDates().first(), seatArray.length);
+						NavigableSet<Ticket> tickets = bService.getTicketsRegularPrice(eService, event, user,
+								seatArray);
+						double price = tickets.stream().mapToDouble(t -> t.getPrice()).sum();
+						int discountPersantage = bService.getDiscount(tickets);
 						System.out.println("Price before discount =>" + String.valueOf(price));
 						System.out.println("Discount is " + String.valueOf(discountPersantage));
 						double finalPrice = (price * (100 - discountPersantage)) / 100;
 						System.out.println("Final price is " + String.valueOf(finalPrice));
-						System.out.println("Do you want to by the tickets, enter 'Y' to confirm or anythig else to cancel");
-						choise = br.readLine();
-						if (choise.equalsIgnoreCase("Y")) {
-							bService.bookTicket(tickets);
-						} else {
-							continue;
-						}
+					} else {
+						continue;
 					}
 				}
-
 			}
+
 		}
 	}
-
 }

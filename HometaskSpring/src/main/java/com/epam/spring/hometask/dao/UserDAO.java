@@ -1,30 +1,39 @@
 package com.epam.spring.hometask.dao;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
 @Component
-public class UserDAO extends DomainObjectDAO implements IUserDAO {
+public class UserDAO implements IUserDAO {
 
-	@Override
+private static Map<User, User> db = new ConcurrentHashMap<>();
+	
 	public User getById(long id) throws NotFoundException {
-		return (User) super.getById(id);
+		Optional<User> entry = db.keySet().stream().filter(u -> u.getId().equals(id)).findFirst();
+		if (entry.isPresent()) {
+			return entry.get();
+		} else {
+			throw new NotFoundException("No entries found for id " + id);
+		}
 	}
 
 	@Override
 	public void saveUser(User user) {
-		this.saveDomainObject(user);
+		db.put(user, user);
 	}
 
 	@Override
 	public void removeUser(User user) {
-		this.removeDomainObject(user);
+		db.remove(user);
 	}
 
 	@Override
@@ -41,8 +50,7 @@ public class UserDAO extends DomainObjectDAO implements IUserDAO {
 
 	@Override
 	public Set<User> getAllUsers() {
-		return this.getAllOfSameType(User.class).stream()
-				.map(dom -> (User) dom).collect(Collectors.toSet());
+		return db.keySet();
 	}
 
 }

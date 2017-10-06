@@ -39,6 +39,9 @@ public class Event extends DomainObject {
 		return Collections.unmodifiableSet(eventTickets.get(dateTime));
 	}
 	
+	public void addNewEventToTicketRegister(LocalDateTime dateTime){
+		eventTickets.put(dateTime, new HashSet<Ticket>());
+	}
 	
 	/**
 	 * Checks if event is aired on particular <code>dateTime</code> and assigns auditorium to it.
@@ -194,33 +197,7 @@ public class Event extends DomainObject {
 		this.auditoriums = auditoriums;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.name);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (this.getClass() != obj.getClass()) {
-			return false;
-		}
-		Event other = (Event) obj;
-		if (this.name == null) {
-			if (other.name != null) {
-				return false;
-			}
-		} else if (!this.name.equals(other.name)) {
-			return false;
-		}
-		return true;
-	}
-
+	
 	@Override
 	public Event clone() {
 		Event copy = new Event();
