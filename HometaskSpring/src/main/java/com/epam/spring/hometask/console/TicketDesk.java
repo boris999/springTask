@@ -42,9 +42,8 @@ public class TicketDesk {
 				System.out.print("Invalid entry try again. ");
 			}
 		}
-		Event customerChoosenevent = null;
-		LocalDateTime customerChoosenDateTime = this.getChoosenEvent(allEventsAirTime, customerEnteredNumber, eventsList, customerChoosenevent);
-		@SuppressWarnings("null")
+		Event customerChoosenevent = this.getChoosenEvent(allEventsAirTime, customerEnteredNumber, eventsList);
+		LocalDateTime customerChoosenDateTime = this.getChoosenEventTime(allEventsAirTime, customerEnteredNumber, eventsList);
 		Event copyEvent = customerChoosenevent.clone();
 		TreeSet<LocalDateTime> setWithSingleDate = new TreeSet<>();
 		setWithSingleDate.add(customerChoosenDateTime);
@@ -71,20 +70,33 @@ public class TicketDesk {
 		return count;
 	}
 
-	private LocalDateTime getChoosenEvent(List<List<LocalDateTime>> eventTimes, int customerChoise, List<Event> eventsToChooseFrom,
-			Event eventChoosen) {
+	private LocalDateTime getChoosenEventTime(List<List<LocalDateTime>> eventTimes, int customerChoise, List<Event> eventsToChooseFrom) {
 		int numberOfEventsInPreviousLists = 0;
 		int eventListNumber = -1;
 		for (List<LocalDateTime> singleEventTimes : eventTimes) {
 			eventListNumber++;
 			numberOfEventsInPreviousLists += singleEventTimes.size();
-			if (numberOfEventsInPreviousLists > customerChoise) {
+			if (numberOfEventsInPreviousLists >= customerChoise) {
 				numberOfEventsInPreviousLists -= singleEventTimes.size();
 				break;
 			}
 		}
-		eventChoosen = eventsToChooseFrom.get(eventListNumber);
 		return eventTimes.get(eventListNumber).get(customerChoise - numberOfEventsInPreviousLists - 1);
+	}
+	//TODO to fix code duplication above and below
+	private Event getChoosenEvent(List<List<LocalDateTime>> eventTimes, int customerChoise,
+			List<Event> eventsToChooseFrom) {
+		int numberOfEventsInPreviousLists = 0;
+		int eventListNumber = -1;
+		for (List<LocalDateTime> singleEventTimes : eventTimes) {
+			eventListNumber++;
+			numberOfEventsInPreviousLists += singleEventTimes.size();
+			if (numberOfEventsInPreviousLists >= customerChoise) {
+				numberOfEventsInPreviousLists -= singleEventTimes.size();
+				break;
+			}
+		}
+		return eventsToChooseFrom.get(eventListNumber);
 	}
 
 	public long[] selectSeats(BufferedReader br) throws IOException {

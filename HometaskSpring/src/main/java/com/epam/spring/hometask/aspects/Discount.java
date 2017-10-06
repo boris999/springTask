@@ -22,40 +22,46 @@ import com.epam.spring.hometask.service.DiscountStrategy;
 public class Discount {
 
 	private Map<DiscountStrategy, Map<User, Long>> discountStats = new HashMap<>();
-	// count how many times each discount(birthday+volume) was given total and
-	// for specific user
 
 
-@After("args(user, dateTime, numberOfTickets)")
-	public void countGetDiscount(User user, LocalDateTime dateTime, int numberOfTickets, JoinPoint joinPoint) {
+	@After("discountMethod()")
+	public void countGetDiscount(JoinPoint joinPoint) {
+		Object[] args = joinPoint.getArgs();
+		User user = (User) args[0];
+		LocalDateTime dateTime = (LocalDateTime) args[1];
+		Integer numberOfTickets = (Integer) args[2];
 		DiscountService ds = (DiscountService) joinPoint.getTarget();
 		List<DiscountStrategy> strategies = ds.getDiscountStrategies();
 		DiscountStrategy selectedStrategy = null;
+		int discount = 0;
 		for (DiscountStrategy strategy : strategies) {
-			if (strategy.calculateDiscount(numberOfTickets) == ds.getDiscount(user, dateTime, numberOfTickets)) {
+			int currentDiscount = ds.getDiscount(user, dateTime, numberOfTickets);
+			if (strategy.calculateDiscount(numberOfTickets) == discount) {
 				selectedStrategy = strategy;
+				discount = currentDiscount;
 				break;
 			}
 		}
-		Map<User, Long> discountsOfSameType = discountStats.get(selectedStrategy);
-		if (discountsOfSameType == null) {
-			discountsOfSameType = new HashMap<User, Long>();
-			discountsOfSameType.put(user, 1L);
-			discountStats.put(selectedStrategy, discountsOfSameType);
-		} else {
-			Long numberOfSpecifiecDiscountForUser = discountsOfSameType.get(user);
-			if (numberOfSpecifiecDiscountForUser == null) {
+		if (discount != 0) {
+			Map<User, Long> discountsOfSameType = discountStats.get(selectedStrategy);
+			if (discountsOfSameType == null) {
+				discountsOfSameType = new HashMap<User, Long>();
 				discountsOfSameType.put(user, 1L);
+				discountStats.put(selectedStrategy, discountsOfSameType);
 			} else {
-				discountsOfSameType.put(user, numberOfSpecifiecDiscountForUser + 1);
+				Long numberOfSpecifiecDiscountForUser = discountsOfSameType.get(user);
+				if (numberOfSpecifiecDiscountForUser == null) {
+					discountsOfSameType.put(user, 1L);
+				} else {
+					discountsOfSameType.put(user, numberOfSpecifiecDiscountForUser + 1);
+				}
 			}
 		}
+
 	}
 
-//	@Pointcut("execution(* com.epam.spring.hometask.service.DiscountService.*())")
-//	private void discountMethods() {}
-//	
-//	@Pointcut("args(user, dateTime, numberOfTickets)")
-//	private void specificArgs() {}
+	@Pointcut("execution(* com.epam.spring.hometask.service.DiscountService.getDiscount())")
+	private void discountMethod() {}
+	
 	
 }
