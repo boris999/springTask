@@ -26,7 +26,7 @@ public class LuckyWinner {
 	@Pointcut("execution(public void com.epam.spring.hometask.service.BookingService.bookTicket())")
 	private void buyingTicket() {}
 	
-//	@Around("buyingTicket()")
+	@Around("buyingTicket()")
 	public void applyLuck(ProceedingJoinPoint jp, JoinPoint joinPoint) throws Throwable{
 		Event choosenEvent = (Event) joinPoint.getArgs()[1];
 		User user = (User) joinPoint.getArgs()[2];
