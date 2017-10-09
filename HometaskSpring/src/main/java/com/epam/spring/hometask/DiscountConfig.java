@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
+import com.epam.spring.hometask.dao.IDiscountDAO;
 import com.epam.spring.hometask.service.DiscountService;
 import com.epam.spring.hometask.service.DiscountStrategy;
 
@@ -27,6 +28,9 @@ public class DiscountConfig {
 	@Autowired
 	@Qualifier("discountStrategyVolume")
 	DiscountStrategy dsv;
+	
+	@Autowired
+	IDiscountDAO discountHistory;
 	
 
 	private DiscountStrategy getDiscountStrategy(){
@@ -59,8 +63,8 @@ public class DiscountConfig {
 		strategies.add(dsb);
 		strategies.add(dsv);
 		ds.setDiscountStrategies(strategies);
+		ds.setDiscountHistory(discountHistory);
 		return ds;
-		
 	}
 	
 

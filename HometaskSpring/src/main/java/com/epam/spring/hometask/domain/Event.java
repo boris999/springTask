@@ -36,7 +36,11 @@ public class Event extends DomainObject {
 	}
 	
 	public Set<Ticket> getAllTickets(LocalDateTime dateTime){
-		return Collections.unmodifiableSet(eventTickets.get(dateTime));
+		Set<Ticket> tickets = eventTickets.get(dateTime);
+		if(tickets == null){
+			tickets=Collections.emptySet();
+		}
+		return Collections.unmodifiableSet(tickets);
 	}
 	
 	public void addNewEventToTicketRegister(LocalDateTime dateTime){

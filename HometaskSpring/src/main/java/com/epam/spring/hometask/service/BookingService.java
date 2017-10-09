@@ -37,7 +37,7 @@ public class BookingService implements IBookingService {
 		return requestedTickets;
 	}
 
-	private void bookTicket(IEventService eventService, Event choosenEvent, User user,
+	public void bookTicket(IEventService eventService, Event choosenEvent, User user,
 			NavigableSet<Ticket> requestedTickets, long seatNumber) throws IOException, NotFoundException {
 		double currentTicketPrice = calculateTicketRegularPrice(choosenEvent, eventService, pricePremiumForHighRating, seatNumber);
 		Ticket currentTicket = new Ticket(user, choosenEvent, choosenEvent.getAirDates().first(), seatNumber, currentTicketPrice);

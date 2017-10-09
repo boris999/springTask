@@ -7,12 +7,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import com.epam.spring.hometask.console.EventCreator;
 import com.epam.spring.hometask.dao.EventDAO;
+import com.epam.spring.hometask.dao.IEventCounterDAO;
 import com.epam.spring.hometask.dao.IEventDAO;
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.exeptions.NotFoundException;
@@ -22,10 +24,12 @@ public class EventService implements ApplicationContextAware, IEventService {
 	private IEventDAO dao;
 	private EventCreator creator;
 	private ApplicationContext context;
+	private IEventCounterDAO eventCounter;
 
-	public EventService(EventDAO dao, EventCreator creator) {
+	public EventService(EventDAO dao, EventCreator creator, IEventCounterDAO eventCounter) {
 		this.dao = dao;
 		this.creator = creator;
+		this.eventCounter = eventCounter;
 	}
 
 	@Override
@@ -94,4 +98,8 @@ public class EventService implements ApplicationContextAware, IEventService {
 		this.context = context;
 	}
 
+	
+	public void incrementCount(String key, JoinPoint joinPoint){
+		eventCounter.incrementCount(key, joinPoint);
+	}
 }

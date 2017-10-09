@@ -7,19 +7,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.service.IEventService;
 
+@PropertySource("resources/other.properties")
 @Component
 public class TicketDesk {
 
-	// DUMMY implementation have to change model to check seatsAvailability
-	// private boolean checkSeatsAvailability(EventDAO dao, Event event, int... seats) throws NotFoundException {
-	// return true;
-	// }
-
+	@Autowired
+	Environment env;
+	
 	public Event chooseEvent(IEventService eventService, BufferedReader br) throws IOException {
 		List<Event> eventsList = new ArrayList<>(eventService.getAll());
 		List<List<LocalDateTime>> allEventsAirTime = new ArrayList<>();
@@ -31,7 +33,7 @@ public class TicketDesk {
 		String eventNumber = null;
 		int customerEnteredNumber = 0;
 		while (customerEnteredNumber == 0) {
-			System.out.println("Enter event number you want tickets for:");
+			System.out.println(env.getProperty("enterEventNumber"));
 			eventNumber = br.readLine();
 			try {
 				customerEnteredNumber = Integer.parseInt(eventNumber);
@@ -39,7 +41,7 @@ public class TicketDesk {
 					throw new NumberFormatException();
 				}
 			} catch (NumberFormatException e) {
-				System.out.print("Invalid entry try again. ");
+				System.out.print(env.getProperty("invalidEntryTryAgain"));
 			}
 		}
 		Event customerChoosenevent = this.getChoosenEvent(allEventsAirTime, customerEnteredNumber, eventsList);
@@ -53,7 +55,7 @@ public class TicketDesk {
 
 	private int printEvents(List<Event> eventsList, List<List<LocalDateTime>> allEventsAirTime, int count) {
 		if (eventsList.isEmpty()) {
-			System.out.println("There are no events yet. Come back later.");
+			System.out.println(env.getProperty("noEventsYet"));
 			return 1;
 		}
 		for (int i = 0; i < eventsList.size(); i++) {
@@ -100,7 +102,7 @@ public class TicketDesk {
 	}
 
 	public long[] selectSeats(BufferedReader br) throws IOException {
-		System.out.println("Enter seatNumbers or 'N' when done");
+		System.out.println(env.getProperty("enterSeatNumber"));
 		List<Long> seats = new ArrayList<>();
 		long seat = 0L;
 		while (true) {
@@ -108,8 +110,8 @@ public class TicketDesk {
 			try {
 				seat = Long.parseLong(seatNum);
 			} catch (NumberFormatException e) {
-				if (!seatNum.equalsIgnoreCase("N")) {
-					System.out.println("Enter valid entry.");
+				if (!seatNum.equalsIgnoreCase(env.getProperty("no"))) {
+					System.out.println(env.getProperty("enterValidEntry"));
 				} else {
 					break;
 				}

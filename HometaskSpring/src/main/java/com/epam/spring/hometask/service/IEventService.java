@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.aspectj.lang.JoinPoint;
+
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
@@ -25,4 +27,7 @@ public interface IEventService {
 	public Event getByName(String name) throws NotFoundException;
 
 	public Set<Event> getAll();
+	
+	public void incrementCount(String key, JoinPoint joinPoint);
+
 }

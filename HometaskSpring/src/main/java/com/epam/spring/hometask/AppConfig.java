@@ -16,6 +16,7 @@ import com.epam.spring.hometask.console.EventCreator;
 import com.epam.spring.hometask.console.TicketDesk;
 import com.epam.spring.hometask.console.UserCreator;
 import com.epam.spring.hometask.dao.EventDAO;
+import com.epam.spring.hometask.dao.IEventCounterDAO;
 import com.epam.spring.hometask.dao.UserDAO;
 import com.epam.spring.hometask.domain.Auditorium;
 import com.epam.spring.hometask.service.BookingService;
@@ -51,6 +52,9 @@ public class AppConfig {
 	
 	@Autowired
 	private TicketDesk ticketDesk;
+	
+	@Autowired
+	private IEventCounterDAO eventCounter;
 
 	@Bean(name = "auditorium1")
 	public Auditorium getAuditoriumOne(){
@@ -89,7 +93,7 @@ public class AppConfig {
 	
 	@Bean(name = "eventService")
 	public EventService getEventService(){
-		return new EventService(eventDAO, eventCreator);
+		return new EventService(eventDAO, eventCreator, eventCounter);
 	}
 
 	@Bean(name = "bookingService")
@@ -100,10 +104,5 @@ public class AppConfig {
 		bService.setTicketDesk(ticketDesk);
 		return bService;
 	}
-
-	@Bean
-	public DiscountService getDiscountService(){
-		return new DiscountService();
-	};
 	
 }

@@ -5,21 +5,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NavigableSet;
 
+import com.epam.spring.hometask.dao.IDiscountDAO;
 import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
 
 public class DiscountService implements IDiscountService {
 
 	private List<DiscountStrategy> discountStrategies;
+	private IDiscountDAO discountHistory;
 
 	@Override
 	public int getDiscount(NavigableSet<Ticket> tickets) {
-		int numberOFtickets = tickets.size();
+		int numberOfTickets = tickets.size();
 		Ticket firstTicket = tickets.first();
 		User user = firstTicket.getUser();
 		LocalDateTime dateTime = firstTicket.getDateTime();
-		
-		return 0;
+		return getDiscount(user, dateTime, numberOfTickets);
 	}
 
 	@Override
@@ -54,5 +55,12 @@ public class DiscountService implements IDiscountService {
 		}
 		return maxDiscount;
 	}
+
+	public void setDiscountHistory(IDiscountDAO discountHistory) {
+		this.discountHistory = discountHistory;
+	}
+	
+	
+	
 	
 }
