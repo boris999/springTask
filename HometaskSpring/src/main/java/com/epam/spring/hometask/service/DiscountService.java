@@ -60,7 +60,9 @@ public class DiscountService implements IDiscountService {
 		this.discountHistory = discountHistory;
 	}
 	
-	
+	public void saveDiscount(User user, DiscountStrategy selectedStrategy){
+		discountHistory.saveDiscount(user, selectedStrategy);
+	}
 	
 	
 }

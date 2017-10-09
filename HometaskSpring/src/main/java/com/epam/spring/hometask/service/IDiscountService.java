@@ -7,8 +7,10 @@ import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
 
 public interface IDiscountService {
-	
+
 	public void setDiscountStrategies(List<DiscountStrategy> discountStrategies);
-	
+
 	public int getDiscount(NavigableSet<Ticket> tickets);
+
+	public void saveDiscount(User user, DiscountStrategy selectedStrategy);
 }

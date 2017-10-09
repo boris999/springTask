@@ -5,6 +5,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +13,15 @@ import com.epam.spring.hometask.dao.IDiscountDAO;
 import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.service.DiscountService;
 import com.epam.spring.hometask.service.DiscountStrategy;
+import com.epam.spring.hometask.service.IDiscountService;
 
 @Aspect
 @Component
 @PropertySource("resources/other.properties")
 public class Discount {
 
-	private IDiscountDAO dao;
+	@Autowired
+	private IDiscountService dao;
 
 	@AfterReturning(pointcut = "discountMethod()", returning = "retVal")
 	public void countGetDiscount(JoinPoint joinPoint, Object retVal) {
