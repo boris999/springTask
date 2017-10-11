@@ -1,9 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version = "1.0" encoding = "UTF-8"?>
+
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-http://www.springframework.org/schema/beans
-http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+   http://www.springframework.org/schema/context
+   http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<context:annotation-config />
 
 	<import resource="discount.xml" />
 
@@ -47,6 +51,9 @@ http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 		<constructor-arg>
 			<bean class="com.epam.spring.hometask.console.EventCreator" />
 		</constructor-arg>
+		<constructor-arg>
+			<bean class="com.epam.spring.hometask.dao.EventCounterDAO" />
+		</constructor-arg>
 	</bean>
 	<bean id="bookingService" class="com.epam.spring.hometask.service.BookingService">
 		<property name="discountService" ref="discountService" />
@@ -60,7 +67,19 @@ http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
 		<property name="locations">
 			<list>
 				<value>resources/auditorium.properties</value>
+				<value>resources/db.properties</value>
 			</list>
 		</property>
 	</bean>
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource" />
+	</bean>
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<!-- destroy-method="close" -->
+		<property name="driverClassName" value="${jdbc.driverClassName}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+	</bean>
+
 </beans>

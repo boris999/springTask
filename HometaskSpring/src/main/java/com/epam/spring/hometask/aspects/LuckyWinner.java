@@ -23,7 +23,7 @@ public class LuckyWinner {
 	//will return true or false. If user is lucky, the ticketPrice changes to zero and ticket is booked, 
 	//thus user pays nothing. Store the information about this lucky event into the user object (like some system messages or so) - OPTIONAL
 
-	@Pointcut("execution(public void com.epam.spring.hometask.service.BookingService.bookTicket())")
+	@Pointcut("execution(* * com.epam.spring.hometask.service.BookingService.bookTicket(..))")
 	private void buyingTicket() {}
 	
 	@Around("buyingTicket()")

@@ -4,6 +4,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.epam.spring.hometask.domain.User;
@@ -13,6 +16,8 @@ import com.epam.spring.hometask.exeptions.NotFoundException;
 public class UserDAO implements IUserDAO {
 
 private static Map<User, User> db = new ConcurrentHashMap<>();
+@Autowired
+private JdbcTemplate jdbcTemplate;
 	
 	public User getById(long id) throws NotFoundException {
 		Optional<User> entry = db.keySet().stream().filter(u -> u.getId().equals(id)).findFirst();
@@ -25,7 +30,9 @@ private static Map<User, User> db = new ConcurrentHashMap<>();
 
 	@Override
 	public void saveUser(User user) {
-		db.put(user, user);
+		//db.put(user, user);
+		String statement = "INSERT INTO USERS "
+		jdbcTemplate.update()
 	}
 
 	@Override

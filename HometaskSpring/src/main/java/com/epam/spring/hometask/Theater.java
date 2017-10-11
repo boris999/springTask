@@ -30,8 +30,9 @@ import com.epam.spring.hometask.service.UserService;
 public class Theater {
 
 	public static void main(String[] args) throws IOException, NotFoundException {
-		ApplicationContext ctx = new AnnotationConfigApplicationContext(AppConfig.class, DiscountConfig.class);
-		// new ClassPathXmlApplicationContext("resources/spring.xml");
+		ApplicationContext ctx = 
+				//new AnnotationConfigApplicationContext(AppConfig.class, DiscountConfig.class);
+		new ClassPathXmlApplicationContext("resources/spring.xml");
 		IBookingService bService = ctx.getBean("bookingService", BookingService.class);
 		IEventService eService = ctx.getBean("eventService", EventService.class);
 		IUserService uService = ctx.getBean("userService", UserService.class);
