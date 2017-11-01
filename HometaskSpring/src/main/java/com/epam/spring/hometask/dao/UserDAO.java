@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,7 @@ import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
 @Component
-public class UserDAO implements IUserDAO {
+public class UserDAO implements IUserDAO, InitializingBean {
 
 private static Map<User, User> db = new ConcurrentHashMap<>();
 @Autowired
@@ -31,10 +32,12 @@ private JdbcTemplate jdbcTemplate;
 	@Override
 	public void saveUser(User user) {
 		//db.put(user, user);
-		String statement = "INSERT INTO USERS "
-		jdbcTemplate.update()
+		String statement = "INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?,?)";
+		jdbcTemplate.update(statement, user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
 	}
-
+	
+	
+	
 	@Override
 	public void removeUser(User user) {
 		db.remove(user);
@@ -56,5 +59,13 @@ private JdbcTemplate jdbcTemplate;
 	public Set<User> getAllUsers() {
 		return db.keySet();
 	}
+	
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		jdbcTemplate.execute("CREATE USERS");
+		
+	}
+	
 
 }
