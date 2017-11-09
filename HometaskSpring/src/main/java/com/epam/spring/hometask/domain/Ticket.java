@@ -3,9 +3,12 @@ package com.epam.spring.hometask.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+
 /**
  * @author Yuriy_Tkach
  */
+@Entity
 public class Ticket extends DomainObject implements Comparable<Ticket> {
 
 	private User user;

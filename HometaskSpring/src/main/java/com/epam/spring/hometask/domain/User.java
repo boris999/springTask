@@ -5,9 +5,12 @@ import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
 
+import javax.persistence.Entity;
+
 /**
  * @author Yuriy_Tkach
  */
+@Entity
 public class User extends DomainObject {
 
 	private String firstName;

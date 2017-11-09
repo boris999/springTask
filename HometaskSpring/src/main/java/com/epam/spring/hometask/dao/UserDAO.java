@@ -5,6 +5,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.persistence.EntityManager;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,11 +16,11 @@ import com.epam.spring.hometask.domain.User;
 import com.epam.spring.hometask.exeptions.NotFoundException;
 
 @Component
-public class UserDAO implements IUserDAO, InitializingBean {
+public class UserDAO implements IUserDAO {
 
 private static Map<User, User> db = new ConcurrentHashMap<>();
 @Autowired
-private JdbcTemplate jdbcTemplate;
+EntityManager em;
 	
 	public User getById(long id) throws NotFoundException {
 		Optional<User> entry = db.keySet().stream().filter(u -> u.getId().equals(id)).findFirst();
@@ -32,8 +34,9 @@ private JdbcTemplate jdbcTemplate;
 	@Override
 	public void saveUser(User user) {
 		//db.put(user, user);
-		String statement = "INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?,?)";
-		jdbcTemplate.update(statement, user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
+//		String statement = "INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?,?)";
+//		jdbcTemplate.update(statement, user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
+		em.persist(user);
 	}
 	
 	
@@ -61,11 +64,11 @@ private JdbcTemplate jdbcTemplate;
 	}
 	
 
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		jdbcTemplate.execute("CREATE USERS");
-		
-	}
+//	@Override
+//	public void afterPropertiesSet() throws Exception {
+//		jdbcTemplate.execute("CREATE USERS");
+//		
+//	}
 	
 
 }

@@ -12,9 +12,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.Entity;
+
 /**
  * @author Yuriy_Tkach
  */
+@Entity
 public class Event extends DomainObject {
 
 	private String name;
