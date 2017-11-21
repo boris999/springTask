@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<spring.ver>4.3.11.RELEASE</spring.ver>
+		<spring.ver>5.0.1.RELEASE</spring.ver>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,11 +36,11 @@
 			<artifactId>spring-tx</artifactId>
 			<version>${spring.ver}</version>
 		</dependency>
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.ver}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-aop</artifactId>
@@ -66,5 +66,10 @@
 			<artifactId>hibernate-core</artifactId>
 			<version>5.2.12.Final</version>
 		</dependency>
+		<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-orm</artifactId>
+    <version>${spring.ver}</version>
+</dependency>
 	</dependencies>
 </project>
