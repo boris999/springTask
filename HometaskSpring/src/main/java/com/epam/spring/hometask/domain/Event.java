@@ -6,37 +6,44 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.NavigableMap;
-import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.MapKeyJoinColumn;
+import javax.persistence.Transient;
 
-/**
- * @author Yuriy_Tkach
- */
 @Entity
 public class Event extends DomainObject {
-
+	@Column(name="EVENT_NAME")
 	private String name;
-
-	private NavigableSet<LocalDateTime> airDates = new TreeSet<>();
-
+	@ElementCollection
+	@CollectionTable(name="AIR_DATES")
+	@MapKeyJoinColumn(name="EVENT_ID")
+	private Set<LocalDateTime> airDates = new TreeSet<>();
+	@Column(name="EVENT_BASE_PRICE")
 	private double basePrice;
-
+	@Column(name="EVENT_RATING")
 	private EventRating rating;
+	@ElementCollection
+	@CollectionTable(name="DATE_TIME_AUDITORIUM")
+	@MapKeyJoinColumn(name="EVENT_ID")
+	@Column(name="AUDITORIUMS")
+	private Map<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
 
-	private NavigableMap<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
-	
+	//TODO to fix this collection/map cannot contain another collection/map -> to create eventTicket Object/class
+	@Transient
 	private Map<LocalDateTime, Set<Ticket>> eventTickets = new HashMap<>();
 
-	
+
 	public void buyTicket(Ticket ticket){
 		eventTickets.get(ticket.getDateTime()).add(ticket);
 	}
-	
+
 	public Set<Ticket> getAllTickets(LocalDateTime dateTime){
 		Set<Ticket> tickets = eventTickets.get(dateTime);
 		if(tickets == null){
@@ -44,11 +51,11 @@ public class Event extends DomainObject {
 		}
 		return Collections.unmodifiableSet(tickets);
 	}
-	
+
 	public void addNewEventToTicketRegister(LocalDateTime dateTime){
 		eventTickets.put(dateTime, new HashSet<Ticket>());
 	}
-	
+
 	/**
 	 * Checks if event is aired on particular <code>dateTime</code> and assigns auditorium to it.
 	 *
@@ -68,29 +75,29 @@ public class Event extends DomainObject {
 		}
 	}
 
-//	/**
-//	 * Removes auditorium assignment from event
-//	 *
-//	 * @param dateTime
-//	 *            Date and time to remove auditorium for
-//	 * @return <code>true</code> if successful, <code>false</code> if not removed
-//	 */
-//	public boolean removeAuditoriumAssignment(LocalDateTime dateTime) {
-//		Auditorium auditorium = this.auditoriums.get(dateTime);
-//		eventTickets.remove(new Pair(dateTime, auditorium));
-//		return this.auditoriums.remove(dateTime) != null;
-//	}
-//
-//	/**
-//	 * Add date and time of event air
-//	 *
-//	 * @param dateTime
-//	 *            Date and time to add
-//	 * @return <code>true</code> if successful, <code>false</code> if already there
-//	 */
-//	public boolean addAirDateTime(LocalDateTime dateTime) {
-//		return this.airDates.add(dateTime);
-//	}
+	//	/**
+	//	 * Removes auditorium assignment from event
+	//	 *
+	//	 * @param dateTime
+	//	 *            Date and time to remove auditorium for
+	//	 * @return <code>true</code> if successful, <code>false</code> if not removed
+	//	 */
+	//	public boolean removeAuditoriumAssignment(LocalDateTime dateTime) {
+	//		Auditorium auditorium = this.auditoriums.get(dateTime);
+	//		eventTickets.remove(new Pair(dateTime, auditorium));
+	//		return this.auditoriums.remove(dateTime) != null;
+	//	}
+	//
+	//	/**
+	//	 * Add date and time of event air
+	//	 *
+	//	 * @param dateTime
+	//	 *            Date and time to add
+	//	 * @return <code>true</code> if successful, <code>false</code> if already there
+	//	 */
+	//	public boolean addAirDateTime(LocalDateTime dateTime) {
+	//		return this.airDates.add(dateTime);
+	//	}
 
 	/**
 	 * Adding date and time of event air and assigning auditorium to that
@@ -122,7 +129,7 @@ public class Event extends DomainObject {
 		if (result) {
 			eventTickets.remove(dateTime);
 			this.auditoriums.remove(dateTime);
-			
+
 		}
 		return result;
 	}
@@ -171,11 +178,11 @@ public class Event extends DomainObject {
 		this.name = name;
 	}
 
-	public NavigableSet<LocalDateTime> getAirDates() {
-		return this.airDates;
+	public TreeSet<LocalDateTime> getAirDates() {
+		return (TreeSet<LocalDateTime>)this.airDates;
 	}
 
-	public void setAirDates(NavigableSet<LocalDateTime> airDates) {
+	public void setAirDates(Set<LocalDateTime> airDates) {
 		this.airDates = airDates;
 	}
 
@@ -195,15 +202,15 @@ public class Event extends DomainObject {
 		this.rating = rating;
 	}
 
-	public NavigableMap<LocalDateTime, Auditorium> getAuditoriums() {
+	public Map<LocalDateTime, Auditorium> getAuditoriums() {
 		return this.auditoriums;
 	}
 
-	public void setAuditoriums(NavigableMap<LocalDateTime, Auditorium> auditoriums) {
+	public void setAuditoriums(Map<LocalDateTime, Auditorium> auditoriums) {
 		this.auditoriums = auditoriums;
 	}
 
-	
+
 	@Override
 	public Event clone() {
 		Event copy = new Event();
@@ -222,5 +229,5 @@ public class Event extends DomainObject {
 		return " " + name + " ";
 	}
 
-	
+
 }

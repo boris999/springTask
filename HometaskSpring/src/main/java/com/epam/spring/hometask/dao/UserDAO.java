@@ -5,11 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
-import org.springframework.beans.factory.InitializingBean;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.epam.spring.hometask.domain.User;
@@ -18,10 +17,11 @@ import com.epam.spring.hometask.exeptions.NotFoundException;
 @Component
 public class UserDAO implements IUserDAO {
 
-private static Map<User, User> db = new ConcurrentHashMap<>();
-@Autowired
-EntityManager em;
-	
+	private static Map<User, User> db = new ConcurrentHashMap<>();
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	@Override
 	public User getById(long id) throws NotFoundException {
 		Optional<User> entry = db.keySet().stream().filter(u -> u.getId().equals(id)).findFirst();
 		if (entry.isPresent()) {
@@ -30,17 +30,18 @@ EntityManager em;
 			throw new NotFoundException("No entries found for id " + id);
 		}
 	}
-
+	@Transactional
 	@Override
 	public void saveUser(User user) {
 		//db.put(user, user);
-//		String statement = "INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?,?)";
-//		jdbcTemplate.update(statement, user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
-		em.persist(user);
+		//		String statement = "INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?,?)";
+		//		jdbcTemplate.update(statement, user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
+		//em.persist(user);
+		sessionFactory.openSession().persist(user);
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void removeUser(User user) {
 		db.remove(user);
@@ -62,13 +63,19 @@ EntityManager em;
 	public Set<User> getAllUsers() {
 		return db.keySet();
 	}
-	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
 
-//	@Override
-//	public void afterPropertiesSet() throws Exception {
-//		jdbcTemplate.execute("CREATE USERS");
-//		
-//	}
-	
+
+	//	@Override
+	//	public void afterPropertiesSet() throws Exception {
+	//		jdbcTemplate.execute("CREATE USERS");
+	//
+	//	}
+
 
 }

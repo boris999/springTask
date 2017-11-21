@@ -18,14 +18,14 @@ import com.epam.spring.hometask.domain.User;
 @Component
 @PropertySource("resources/other.properties")
 public class LuckyWinner {
-	
-	//every time the bookTicket method is executed perform the checkLucky method for the user that based on some randomness 
-	//will return true or false. If user is lucky, the ticketPrice changes to zero and ticket is booked, 
+
+	//every time the bookTicket method is executed perform the checkLucky method for the user that based on some randomness
+	//will return true or false. If user is lucky, the ticketPrice changes to zero and ticket is booked,
 	//thus user pays nothing. Store the information about this lucky event into the user object (like some system messages or so) - OPTIONAL
 
 	@Pointcut("execution(* * com.epam.spring.hometask.service.BookingService.bookTicket(..))")
 	private void buyingTicket() {}
-	
+
 	@Around("buyingTicket()")
 	public void applyLuck(ProceedingJoinPoint jp, JoinPoint joinPoint) throws Throwable{
 		Event choosenEvent = (Event) joinPoint.getArgs()[1];
@@ -40,8 +40,8 @@ public class LuckyWinner {
 			requestedTickets.add(luckyTicket);
 			choosenEvent.buyTicket(luckyTicket);
 		}
-		
+
 	}
-	
-	
+
+
 }

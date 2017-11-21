@@ -3,14 +3,11 @@ package com.epam.spring.hometask;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.Environment;
@@ -30,9 +27,9 @@ import com.epam.spring.hometask.service.UserService;
 public class Theater {
 
 	public static void main(String[] args) throws IOException, NotFoundException {
-		ApplicationContext ctx = 
+		ApplicationContext ctx =
 				//new AnnotationConfigApplicationContext(AppConfig.class, DiscountConfig.class);
-		new ClassPathXmlApplicationContext("resources/spring.xml");
+				new ClassPathXmlApplicationContext("resources/spring.xml");
 		IBookingService bService = ctx.getBean("bookingService", BookingService.class);
 		IEventService eService = ctx.getBean("eventService", EventService.class);
 		IUserService uService = ctx.getBean("userService", UserService.class);

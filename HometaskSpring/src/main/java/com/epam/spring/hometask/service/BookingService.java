@@ -62,7 +62,7 @@ public class BookingService implements IBookingService {
 	public int getDiscount(NavigableSet<Ticket> tickets) {
 		return this.discountService.getDiscount(tickets);
 	}
-	
+
 	public double calculateTicketRegularPrice(Event event, IEventService eventService, double pricePremiumForHighRating, long seatNumber)
 			throws IOException, NotFoundException {
 		LocalDateTime choosenDateTime = event.getAirDates().first();
@@ -73,11 +73,11 @@ public class BookingService implements IBookingService {
 		boolean isHighRated = eventInDB.getRating().equals(EventRating.HIGH);
 		double priceForRating = isHighRated ? eventInDB.getBasePrice() * pricePremiumForHighRating
 				: eventInDB.getBasePrice();
-			if (vipSeat.contains(seatNumber)) {
-				price += priceForRating*auditorium.getExtraPayForVipSeat();
-			} else {
-				price += priceForRating;
-			}
+		if (vipSeat.contains(seatNumber)) {
+			price += priceForRating*auditorium.getExtraPayForVipSeat();
+		} else {
+			price += priceForRating;
+		}
 		return price;
 	}
 

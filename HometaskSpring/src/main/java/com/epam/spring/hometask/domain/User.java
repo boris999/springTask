@@ -1,29 +1,32 @@
 package com.epam.spring.hometask.domain;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.NavigableSet;
 import java.util.Objects;
 import java.util.TreeSet;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 
-/**
- * @author Yuriy_Tkach
- */
 @Entity
 public class User extends DomainObject {
-
+	@Column(name = "FIRST_NAME")
 	private String firstName;
-
+	@Column(name = "LAST_NAME")
 	private String lastName;
-
+	@Column(name = "EMAIL")
 	private String email;
-
+	@Column(name = "BIRTHDAY")
 	private LocalDate birthday;
+	@OneToMany
+	@JoinTable(name="USER_TICKETS", joinColumns=@JoinColumn(name="USER_ID"), inverseJoinColumns=@JoinColumn(name="TICKET_ID"))
+	private Collection<Ticket> tickets = new TreeSet<>();
 
-	private NavigableSet<Ticket> tickets = new TreeSet<>();
 
-	
 	public boolean isLucky() {
 		if (this.firstName.equalsIgnoreCase("boris")) {
 			return true;
@@ -31,7 +34,7 @@ public class User extends DomainObject {
 			return false;
 		}
 	}
-	
+
 	public String getFirstName() {
 		return this.firstName;
 	}
@@ -64,7 +67,7 @@ public class User extends DomainObject {
 		this.birthday = birthday;
 	}
 
-	public NavigableSet<Ticket> getTickets() {
+	public Collection<Ticket> getTickets() {
 		return this.tickets;
 	}
 

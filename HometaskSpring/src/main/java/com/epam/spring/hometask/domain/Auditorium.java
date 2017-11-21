@@ -7,9 +7,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
-/**
- * @author Yuriy_Tkach
- */
+import javax.persistence.Embeddable;
+import javax.persistence.Transient;
+@Embeddable
 public class Auditorium {
 
 	private String name;
@@ -17,7 +17,7 @@ public class Auditorium {
 	private long numberOfSeats;
 
 	private double extraPayForVipSeat;
-
+	@Transient
 	private Set<Long> vipSeats = Collections.emptySet();
 
 	public Auditorium() {
