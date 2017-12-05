@@ -11,7 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Table(name="CINEMA_USER")
 @Entity
 public class User extends DomainObject {
 	@Column(name = "FIRST_NAME")

@@ -23,15 +23,15 @@ public class Event extends DomainObject {
 	private String name;
 	@ElementCollection
 	@CollectionTable(name="AIR_DATES")
-	@MapKeyJoinColumn(name="EVENT_ID")
+	@Column(name="AIR_DATES_ID")
 	private Set<LocalDateTime> airDates = new TreeSet<>();
 	@Column(name="EVENT_BASE_PRICE")
 	private double basePrice;
 	@Column(name="EVENT_RATING")
 	private EventRating rating;
 	@ElementCollection
-	@CollectionTable(name="DATE_TIME_AUDITORIUM")
-	@MapKeyJoinColumn(name="EVENT_ID")
+	@CollectionTable(name="HALL_SCHEDULE")
+	@MapKeyJoinColumn(name="HALL_SCHEDULE_ID")
 	@Column(name="AUDITORIUMS")
 	private Map<LocalDateTime, Auditorium> auditoriums = new TreeMap<>();
 

@@ -7,7 +7,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,11 +35,13 @@ public class UserDAO implements IUserDAO {
 	@Transactional
 	@Override
 	public void saveUser(User user) {
-		//db.put(user, user);
-		//		String statement = "INSERT INTO USERS (ID, FIRST_NAME, LAST_NAME, EMAIL, BIRTHDAY) VALUES(?,?,?,?,?)";
-		//		jdbcTemplate.update(statement, user.getId(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getBirthday());
-		//em.persist(user);
-		sessionFactory.openSession().persist(user);
+		Session openSession = sessionFactory.openSession();
+		Transaction t = openSession.beginTransaction();
+		openSession.save(user);
+		t.commit();
+
+
+
 	}
 
 
