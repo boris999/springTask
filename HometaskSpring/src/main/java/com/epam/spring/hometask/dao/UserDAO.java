@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 import javax.transaction.Transactional;
 
@@ -35,15 +36,39 @@ public class UserDAO implements IUserDAO {
 	@Transactional
 	@Override
 	public void saveUser(User user) {
-		Session openSession = sessionFactory.openSession();
-		Transaction t = openSession.beginTransaction();
-		openSession.save(user);
-		t.commit();
-
-
-
+		Session session = null;
+		try {
+			session = sessionFactory.openSession();
+			db(user, session, saveFunction);
+		} finally {
+			if (session != null) {
+				session.close();
+			}
+		}
 	}
 
+	BiFunction<User, Session, User> saveFunction = (u, s) -> {
+		s.save(u);
+		return u;
+	};
+
+
+
+	private void db(User user, Session session, BiFunction<User, Session, User> function) {
+		Transaction transaction = null;
+		try {
+			session = sessionFactory.openSession();
+			transaction = session.getTransaction();
+			transaction.begin();
+			function.apply(user, session);
+			transaction.commit();
+		} catch (Exception e) {
+			if (transaction != null) {
+				transaction.rollback();
+			}
+			e.printStackTrace();
+		}
+	}
 
 
 	@Override
