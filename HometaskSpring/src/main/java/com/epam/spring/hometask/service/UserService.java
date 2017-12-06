@@ -2,13 +2,11 @@ package com.epam.spring.hometask.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Optional;
 
 import com.epam.spring.hometask.console.UserCreator;
 import com.epam.spring.hometask.dao.IUserDAO;
 import com.epam.spring.hometask.dao.UserDAO;
 import com.epam.spring.hometask.domain.User;
-import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public class UserService implements IUserService {
 
@@ -23,34 +21,26 @@ public class UserService implements IUserService {
 	@Override
 	public void createUser(BufferedReader br) throws IOException {
 		User user = this.creator.createUser(br);
-		synchronized (user) {
-			Optional<Long> lastUserID = this.dao.getAllUsers().stream().map(u -> u.getId()).max((l1, l2) -> (Long.compare(l1, l2)));
-			if (lastUserID.isPresent()) {
-				user.setId(lastUserID.get() + 1);
-			} else {
-				user.setId(1L);
-			}
-		}
-		this.dao.saveUser(user);
+		this.dao.save(user);
 	}
 
 	@Override
-	public User selectUser(BufferedReader br) throws IOException, NotFoundException {
+	public User selectUser(BufferedReader br) throws IOException {
 		return this.creator.selectUser(this, br);
 	}
 
 	@Override
 	public void removeUser(User user) {
-		this.dao.removeUser(user);
+		this.dao.remove(user);
 	}
 
 	@Override
-	public User getUserById(long id) throws NotFoundException {
-		return this.dao.getById(id);
+	public User getUserById(long id) {
+		return this.dao.getUserById(id);
 	}
 
 	@Override
-	public User getUserByEmail(String email) throws NotFoundException {
+	public User getUserByEmail(String email)  {
 		return this.dao.getUserByEmail(email);
 	}
 

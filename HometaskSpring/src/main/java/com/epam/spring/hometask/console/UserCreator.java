@@ -12,7 +12,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import com.epam.spring.hometask.domain.User;
-import com.epam.spring.hometask.exeptions.NotFoundException;
 import com.epam.spring.hometask.service.IUserService;
 
 @PropertySource("resources/other.properties")
@@ -20,10 +19,10 @@ import com.epam.spring.hometask.service.IUserService;
 public class UserCreator {
 
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yy");
-	
+
 	@Autowired
 	Environment env;
-	
+
 	public User createUser(BufferedReader br) throws IOException {
 		System.out.println(env.getProperty("user.first.name"));
 		String first = br.readLine();
@@ -51,7 +50,7 @@ public class UserCreator {
 		return user;
 	}
 
-	public User selectUser(IUserService uService, BufferedReader br) throws IOException, NotFoundException {
+	public User selectUser(IUserService uService, BufferedReader br) throws IOException {
 		User user = null;
 		while (user == null) {
 			System.out.println(env.getProperty("user.registered.id.enter"));

@@ -15,7 +15,6 @@ import org.springframework.core.env.Environment;
 import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
-import com.epam.spring.hometask.exeptions.NotFoundException;
 import com.epam.spring.hometask.service.BookingService;
 import com.epam.spring.hometask.service.EventService;
 import com.epam.spring.hometask.service.IBookingService;
@@ -26,7 +25,7 @@ import com.epam.spring.hometask.service.UserService;
 @PropertySource("resources/other.properties")
 public class Theater {
 
-	public static void main(String[] args) throws IOException, NotFoundException {
+	public static void main(String[] args) throws IOException {
 		ApplicationContext ctx =
 				//new AnnotationConfigApplicationContext(AppConfig.class, DiscountConfig.class);
 				new ClassPathXmlApplicationContext("resources/spring.xml");
@@ -40,7 +39,7 @@ public class Theater {
 	}
 
 	private static void runTheater(IBookingService bService, IEventService eService, IUserService uService,
-			BufferedReader br, Environment env) throws IOException, NotFoundException {
+			BufferedReader br, Environment env) throws IOException {
 		while (true) {
 			System.out.println(env.getProperty("mainMessage"));
 			String choise = br.readLine();

@@ -1,13 +1,16 @@
 package com.epam.spring.hometask.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
+@SuppressWarnings("serial")
 @MappedSuperclass
-public class DomainObject {
-	@Id 
+public class DomainObject implements Serializable{
+	@Id
 	@GeneratedValue
 	@Column(name = "ID")
 	private Long id;
@@ -45,5 +48,5 @@ public class DomainObject {
 		return true;
 	}
 
-	
+
 }

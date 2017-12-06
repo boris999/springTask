@@ -13,7 +13,6 @@ import com.epam.spring.hometask.domain.Event;
 import com.epam.spring.hometask.domain.EventRating;
 import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
-import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public class BookingService implements IBookingService {
 
@@ -23,7 +22,7 @@ public class BookingService implements IBookingService {
 
 	@Override
 	public NavigableSet<Ticket> getTicketsRegularPrice(IEventService eventService, Event choosenEvent, User user, long... seatNumbers)
-			throws IOException, NotFoundException {
+			throws IOException {
 		// TODO to check is seat is already booked! From all tickets stream+filter
 		NavigableSet<Ticket> requestedTickets = new TreeSet<>();
 		for (long seatNumber : seatNumbers) {
@@ -36,7 +35,7 @@ public class BookingService implements IBookingService {
 	}
 
 	public void bookTicket(IEventService eventService, Event choosenEvent, User user,
-			NavigableSet<Ticket> requestedTickets, long seatNumber) throws IOException, NotFoundException {
+			NavigableSet<Ticket> requestedTickets, long seatNumber) throws IOException {
 		double currentTicketPrice = calculateTicketRegularPrice(choosenEvent, eventService, pricePremiumForHighRating, seatNumber);
 		Ticket currentTicket = new Ticket(user, choosenEvent, choosenEvent.getAirDates().first(), seatNumber, currentTicketPrice);
 		requestedTickets.add(currentTicket);
@@ -64,7 +63,7 @@ public class BookingService implements IBookingService {
 	}
 
 	public double calculateTicketRegularPrice(Event event, IEventService eventService, double pricePremiumForHighRating, long seatNumber)
-			throws IOException, NotFoundException {
+			throws IOException {
 		LocalDateTime choosenDateTime = event.getAirDates().first();
 		Event eventInDB = eventService.getById(event.getId());
 		Auditorium auditorium = eventInDB.getAuditoriums().get(choosenDateTime);

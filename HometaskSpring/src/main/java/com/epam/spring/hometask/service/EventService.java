@@ -17,7 +17,6 @@ import com.epam.spring.hometask.dao.EventDAO;
 import com.epam.spring.hometask.dao.IEventCounterDAO;
 import com.epam.spring.hometask.dao.IEventDAO;
 import com.epam.spring.hometask.domain.Event;
-import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public class EventService implements ApplicationContextAware, IEventService {
 
@@ -79,12 +78,12 @@ public class EventService implements ApplicationContextAware, IEventService {
 	}
 
 	@Override
-	public Event getById(long id) throws NotFoundException {
+	public Event getById(long id) {
 		return this.dao.getById(id);
 	}
 
 	@Override
-	public Event getByName(String name) throws NotFoundException {
+	public Event getByName(String name) {
 		return this.dao.getEventByName(name);
 	}
 
@@ -98,7 +97,8 @@ public class EventService implements ApplicationContextAware, IEventService {
 		this.context = context;
 	}
 
-	
+
+	@Override
 	public void incrementCount(String key, JoinPoint joinPoint){
 		eventCounter.incrementCount(key, joinPoint);
 	}

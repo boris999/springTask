@@ -8,7 +8,6 @@ import java.util.Set;
 import org.aspectj.lang.JoinPoint;
 
 import com.epam.spring.hometask.domain.Event;
-import com.epam.spring.hometask.exeptions.NotFoundException;
 
 public interface IEventService {
 
@@ -22,12 +21,12 @@ public interface IEventService {
 
 	public void removeEvent(Event event);
 
-	public Event getById(long id) throws NotFoundException;
+	public Event getById(long id);
 
-	public Event getByName(String name) throws NotFoundException;
+	public Event getByName(String name);
 
 	public Set<Event> getAll();
-	
+
 	public void incrementCount(String key, JoinPoint joinPoint);
 
 }

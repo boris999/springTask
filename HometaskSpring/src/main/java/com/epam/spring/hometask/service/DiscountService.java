@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.NavigableSet;
 
 import com.epam.spring.hometask.dao.IDiscountDAO;
+import com.epam.spring.hometask.domain.DomainObject;
 import com.epam.spring.hometask.domain.Ticket;
 import com.epam.spring.hometask.domain.User;
 
@@ -18,7 +19,7 @@ public class DiscountService implements IDiscountService {
 	public int getDiscount(NavigableSet<Ticket> tickets) {
 		int numberOfTickets = tickets.size();
 		Ticket firstTicket = tickets.first();
-		User user = firstTicket.getUser();
+		DomainObject user = firstTicket.getUser();
 		LocalDateTime dateTime = firstTicket.getDateTime();
 		return getDiscount(user, dateTime, numberOfTickets);
 	}
@@ -28,11 +29,11 @@ public class DiscountService implements IDiscountService {
 		this.discountStrategies = discountStrategies;
 	}
 
-	private boolean eligibleForBirthdayDiscount(User user, LocalDateTime airDate) {
+	private boolean eligibleForBirthdayDiscount(DomainObject user, LocalDateTime airDate) {
 		if(user == null){
 			return false;
 		}
-		final LocalDate birthday = user.getBirthday();
+		final LocalDate birthday = ((User) user).getBirthday();
 		final LocalDate eventDate = airDate.toLocalDate();
 		return eventDate.minusDays(5).isBefore(birthday) && birthday.plusDays(5).isAfter(eventDate);
 	}
@@ -41,8 +42,8 @@ public class DiscountService implements IDiscountService {
 		return discountStrategies;
 	}
 
-	
-	private int getDiscount(User user, LocalDateTime dateTime, int numberOfTickets) {
+
+	private int getDiscount(DomainObject user, LocalDateTime dateTime, int numberOfTickets) {
 		int maxDiscount = 0;
 		for (DiscountStrategy ds : this.discountStrategies) {
 			if (ds.isBirthday() && !this.eligibleForBirthdayDiscount(user, dateTime)) {
@@ -59,10 +60,11 @@ public class DiscountService implements IDiscountService {
 	public void setDiscountHistory(IDiscountDAO discountHistory) {
 		this.discountHistory = discountHistory;
 	}
-	
+
+	@Override
 	public void saveDiscount(User user, DiscountStrategy selectedStrategy){
 		discountHistory.saveDiscount(user, selectedStrategy);
 	}
-	
-	
+
+
 }
